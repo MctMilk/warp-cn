@@ -1,0 +1,142 @@
+name: Upstream Sync
+
+# 每周一 03:00 UTC 自动从 warpdotdev/warp 拉取并尝试合并；也可在 Actions 页面手动触发。
+# 干净合并 → i18n-lint → 自动开 PR；冲突 → 把 sync/<date> 分支推上去 + 开 issue。
+on:
+  schedule:
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+# 同步任务串行执行（不取消进行中的，避免半 push 状态）。
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      status: ${{ steps.merge.outputs.status }}
+      sync_branch: ${{ steps.merge.outputs.sync_branch }}
+      conflict_count: ${{ steps.merge.outputs.conflict_count }}
+
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name "warp-cn-sync[bot]"
+          git config user.email "warp-cn-sync@users.noreply.github.com"
+
+      - name: Try merge upstream
+        id: merge
+        run: ./script/sync-upstream
+        continue-on-error: true
+
+      - name: Push sync branch
+        if: steps.merge.outputs.sync_branch != ''
+        run: git push --force-with-lease origin "${{ steps.merge.outputs.sync_branch }}"
+
+  i18n-lint:
+    needs: sync
+    if: needs.sync.outputs.status == 'clean'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.sync.outputs.sync_branch }}
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: i18n-lint-sync
+          # sync 分支只读缓存，避免每周更新缓存增加成本
+          save-if: false
+
+      - name: Run i18n-lint
+        run: cargo xtask i18n-lint
+
+  open-pr:
+    needs: [sync, i18n-lint]
+    if: needs.sync.outputs.status == 'clean' && success()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base master \
+            --head "${{ needs.sync.outputs.sync_branch }}" \
+            --title "chore(sync): merge upstream/master ($(date -u +%Y-%m-%d))" \
+            --label "upstream-sync" \
+            --body $'Automated upstream sync.\n\nMerge produced no conflicts and `cargo xtask i18n-lint` passed.\nReview the diff and merge if it looks good.'
+
+  open-issue:
+    needs: sync
+    if: needs.sync.outputs.status == 'conflict'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.sync.outputs.sync_branch }}
+
+      - name: Collect conflict file list
+        id: collect
+        run: |
+          set -euo pipefail
+          # WIP commit was created by sync-upstream; the files it touched are the conflicts.
+          {
+            echo 'files<<EOF'
+            git show --name-only --pretty=format: HEAD | sed '/^$/d' | sort -u
+            echo 'EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Open conflict issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ needs.sync.outputs.sync_branch }}
+          COUNT: ${{ needs.sync.outputs.conflict_count }}
+          FILES: ${{ steps.collect.outputs.files }}
+        run: |
+          gh issue create \
+            --title "Upstream sync conflict: ${COUNT} file(s) ($(date -u +%Y-%m-%d))" \
+            --label "upstream-sync,conflict" \
+            --body "$(cat <<EOF
+          Automated upstream sync hit conflicts on branch \`${BRANCH}\`.
+
+          **Conflict files (${COUNT})**:
+          \`\`\`
+          ${FILES}
+          \`\`\`
+
+          **Resolve locally**:
+          \`\`\`bash
+          git fetch origin ${BRANCH}
+          git checkout ${BRANCH}
+          # Drop the WIP commit so you resolve from the merge state:
+          git reset --soft HEAD~1
+          # Resolve conflicts, then:
+          git commit --no-edit
+          git push --force-with-lease
+          gh pr create --base master --head ${BRANCH} --label upstream-sync
+          \`\`\`
+
+          \`git rerere\` will record any resolutions you make and replay them on
+          subsequent syncs.
+          EOF
+          )"
