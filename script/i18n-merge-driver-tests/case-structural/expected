@@ -1,0 +1,11 @@
+<<<<<<< ours
+fn msg() -> String {
+    warp_i18n::t!("greeting-key")
+}
+=======
+const MSG: &str = "world";
+>>>>>>> theirs
+
+fn greet() -> String {
+    msg()
+}

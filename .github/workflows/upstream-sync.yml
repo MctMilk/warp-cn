@@ -38,6 +38,9 @@ jobs:
           git config user.name "warp-cn-sync[bot]"
           git config user.email "warp-cn-sync@users.noreply.github.com"
 
+      - name: Install i18n-aware merge driver
+        run: ./script/install-merge-driver
+
       - name: Try merge upstream
         id: merge
         run: ./script/sync-upstream

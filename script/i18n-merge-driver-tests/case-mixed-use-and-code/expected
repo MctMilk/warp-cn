@@ -1,0 +1,10 @@
+use a;
+use warp_i18n::t;
+
+fn greet() {
+<<<<<<< ours
+    println!("{}", t!("greeting"));
+=======
+    eprintln!("hi there!");
+>>>>>>> theirs
+}

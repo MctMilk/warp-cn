@@ -1,0 +1,7 @@
+fn msg() -> String {
+    warp_i18n::t!("greeting-key")
+}
+
+fn greet() -> String {
+    msg()
+}

@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""
+i18n-aware Rust merge driver.
+
+Auto-resolves conflict hunks where both `ours` and `theirs` are pure
+`use ...;` blocks (union + dedupe + alphabetical sort). Anything else
+(code, structural rewrites, mixed blocks) is punted with conflict markers
+preserved, so rerere/humans can finish the merge.
+
+Git contract:
+  argv[1] = %O  ancestor
+  argv[2] = %A  ours (also: write merged result here)
+  argv[3] = %B  theirs
+  argv[4] = %P  pathname (informational)
+
+Exit:
+  0  fully merged (no markers in output)
+  1  partial merge (markers remain; git will surface as conflict)
+  2  unexpected error
+"""
+from __future__ import annotations
+
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+USE_LINE = re.compile(r'^\s*(pub\s*(\([^)]*\))?\s+)?use\s+\S.*;\s*$')
+
+
+def is_pure_use_block(lines: list[str]) -> bool:
+    """Every non-blank, non-comment line is a single-line `use` statement."""
+    has_use = False
+    for ln in lines:
+        s = ln.strip()
+        if not s or s.startswith('//'):
+            continue
+        if s.count('{') != s.count('}'):
+            return False  # multi-line use; safer to punt
+        if not USE_LINE.match(ln):
+            return False
+        has_use = True
+    return has_use
+
+
+def merge_use_blocks(ours: list[str], theirs: list[str]) -> list[str]:
+    """Union both sides, drop blanks/comments, dedupe by stripped form, sort."""
+    seen: set[str] = set()
+    for ln in (*ours, *theirs):
+        s = ln.strip()
+        if s and not s.startswith('//'):
+            seen.add(s)
+    return sorted(seen)
+
+
+def split_conflicts(text: str):
+    """Yield ('normal', [lines]) | ('conflict', (head, ours, sep, theirs, tail))."""
+    lines = text.split('\n')
+    i, n = 0, len(lines)
+    buf: list[str] = []
+    while i < n:
+        if lines[i].startswith('<<<<<<<'):
+            if buf:
+                yield ('normal', buf); buf = []
+            head = lines[i]
+            sep = end = -1
+            for j in range(i + 1, n):
+                if sep < 0 and lines[j].startswith('======='):
+                    sep = j
+                elif lines[j].startswith('>>>>>>>'):
+                    end = j; break
+            if sep < 0 or end < 0:
+                buf.append(lines[i]); i += 1; continue
+            yield ('conflict', (head, lines[i+1:sep], lines[sep], lines[sep+1:end], lines[end]))
+            i = end + 1
+        else:
+            buf.append(lines[i]); i += 1
+    if buf:
+        yield ('normal', buf)
+
+
+def three_way_merge(base: Path, ours: Path, theirs: Path) -> tuple[str, int]:
+    """Run `git merge-file -p` and return (text, conflict_count)."""
+    cp = subprocess.run(
+        ['git', 'merge-file', '-p',
+         '-L', 'ours', '-L', 'base', '-L', 'theirs',
+         str(ours), str(base), str(theirs)],
+        capture_output=True, text=True,
+    )
+    # git merge-file: 0 = clean, >0 = number of unresolved conflicts, <0 = error
+    if cp.returncode < 0:
+        sys.stderr.write(cp.stderr)
+        sys.exit(2)
+    return cp.stdout, cp.returncode
+
+
+def main(argv: list[str]) -> int:
+    if len(argv) < 4:
+        sys.stderr.write("usage: i18n-merge-driver <base> <ours> <theirs> [<path>]\n")
+        return 2
+    base, ours, theirs = (Path(argv[1]), Path(argv[2]), Path(argv[3]))
+
+    text, conflicts = three_way_merge(base, ours, theirs)
+    if conflicts == 0:
+        ours.write_text(text)
+        return 0
+
+    out: list[str] = []
+    remaining = 0
+    for kind, payload in split_conflicts(text):
+        if kind == 'normal':
+            out.extend(payload)
+        else:
+            head, our_ls, sep, their_ls, tail = payload
+            if is_pure_use_block(our_ls) and is_pure_use_block(their_ls):
+                out.extend(merge_use_blocks(our_ls, their_ls))
+            else:
+                out.append(head); out.extend(our_ls)
+                out.append(sep);  out.extend(their_ls)
+                out.append(tail)
+                remaining += 1
+
+    ours.write_text('\n'.join(out))
+    return 0 if remaining == 0 else 1
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))

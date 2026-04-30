@@ -1,0 +1,5 @@
+const MSG: &str = "hello";
+
+fn greet() -> &'static str {
+    MSG
+}

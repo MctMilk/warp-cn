@@ -1,0 +1,6 @@
+use a;
+use warp_i18n::t;
+
+fn greet() {
+    println!("{}", t!("greeting"));
+}

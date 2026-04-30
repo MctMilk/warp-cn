@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Install the i18n-aware merge driver into the current repo's git config.
+# Idempotent: safe to re-run.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+DRIVER="$(pwd)/script/i18n-merge-driver"
+[ -x "$DRIVER" ] || { echo "missing or not executable: $DRIVER" >&2; exit 1; }
+
+git config merge.i18n-aware.name   "i18n-aware Rust use-block merger"
+git config merge.i18n-aware.driver "'$DRIVER' %O %A %B %P"
+git config merge.i18n-aware.recursive "binary"
+
+echo "✓ merge driver installed (key: merge.i18n-aware)"

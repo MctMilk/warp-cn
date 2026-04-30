@@ -1,0 +1,5 @@
+use a;
+
+fn greet() {
+    eprintln!("hi there!");
+}
