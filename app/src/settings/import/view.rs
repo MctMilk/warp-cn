@@ -1,5 +1,6 @@
 use itertools::Itertools;
 use warp_core::{settings::Setting, ui::appearance::Appearance};
+use warp_i18n::t;
 
 use warpui::{
     elements::{
@@ -995,7 +996,7 @@ impl View for SettingsImportView {
         if display_new_session_text {
             new_session_setting_text = Container::new(
                 Text::new(
-                    "Some settings will take effect when you open a new session.",
+                    t!("settings-import-restart-hint"),
                     font_family,
                     font_size,
                 )

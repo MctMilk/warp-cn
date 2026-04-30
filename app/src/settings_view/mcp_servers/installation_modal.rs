@@ -253,7 +253,7 @@ impl InstallationModalBody {
 
         // Renders MCP title text
         let title = Text::new(
-            format!("Install {name}"),
+            warp_i18n::t!("settings-mcp-install-title", name = name).to_string(),
             appearance.ui_font_family(),
             appearance.header_font_size(),
         )
@@ -297,7 +297,7 @@ impl InstallationModalBody {
         // Renders 'ESC' text for closing the modal
         let escape_button = Container::new(
             Text::new_inline(
-                "ESC".to_string(),
+                warp_i18n::t!("settings-mcp-install-modal-esc"),
                 appearance.ui_font_family(),
                 appearance.ui_font_size() * 0.8,
             )
@@ -419,9 +419,9 @@ impl InstallationModalBody {
         .finish();
 
         let source_text = if is_shared {
-            "Shared from team"
+            warp_i18n::t!("settings-mcp-install-source-shared-team")
         } else {
-            "From another device"
+            warp_i18n::t!("settings-mcp-install-source-another-device")
         };
 
         let label_text = Text::new_inline(
@@ -444,7 +444,7 @@ impl InstallationModalBody {
         let cancel_button = appearance
             .ui_builder()
             .button(ButtonVariant::Text, self.cancel_mouse_state.clone())
-            .with_text_label("Cancel".into())
+            .with_text_label(warp_i18n::t!("settings-mcp-install-cancel").to_string())
             .with_style(UiComponentStyles {
                 font_weight: Some(Weight::Bold),
                 font_color: Some(appearance.theme().active_ui_text_color().into()),
@@ -481,7 +481,7 @@ impl InstallationModalBody {
             .with_cross_axis_alignment(CrossAxisAlignment::Center)
             .with_child(
                 Text::new_inline(
-                    "Install",
+                    warp_i18n::t!("settings-mcp-install-confirm"),
                     appearance.ui_font_family(),
                     appearance.ui_font_size(),
                 )
@@ -612,7 +612,7 @@ impl View for InstallationModalBody {
                 .finish()
         } else {
             Text::new(
-                "No MCP server selected",
+                warp_i18n::t!("settings-mcp-no-server-selected"),
                 appearance.ui_font_family(),
                 appearance.ui_font_size(),
             )

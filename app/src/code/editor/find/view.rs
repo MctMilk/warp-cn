@@ -18,7 +18,8 @@ use warp_editor::editor::NavigationKey;
 use warp_editor::search::{SearchEvent, Searcher};
 use warpui::elements::MainAxisAlignment;
 use warpui::elements::{ChildAnchor, OffsetPositioning, Radius, SavePosition, Shrinkable};
-use warpui::keymap::EditableBinding;
+use crate::util::bindings::BindingDescriptionFluentExt;
+use warpui::keymap::{BindingDescription, EditableBinding};
 use warpui::ui_components::components::UiComponent;
 pub use warpui::{
     accessibility::{AccessibilityContent, WarpA11yRole},
@@ -108,7 +109,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "find:find_next_occurrence",
-            "Find the next occurrence of your search query",
+            BindingDescription::fluent("binding-find-next-occurrence"),
             FindAction::CmdG,
         )
         .with_context_predicate(id!("CodeEditorFind"))
@@ -118,7 +119,7 @@ pub fn init(app: &mut AppContext) {
         .with_linux_or_windows_key_binding("f3"),
         EditableBinding::new(
             "find:find_prev_occurrence",
-            "Find the previous occurrence of your search query",
+            BindingDescription::fluent("binding-find-prev-occurrence"),
             FindAction::CmdShiftG,
         )
         .with_context_predicate(id!("CodeEditorFind"))
@@ -372,16 +373,20 @@ impl CodeEditorFind {
     pub fn emit_result_a11y_content(&mut self, ctx: &mut ViewContext<Self>) {
         let content = if let Some(match_index) = self.searcher.as_ref(ctx).selected_match() {
             AccessibilityContent::new(
-                format!(
-                    "Result {} of {}.",
-                    match_index + 1,
-                    self.searcher.as_ref(ctx).match_count()
-                ),
-                "Use enter and shift-enter to navigate between matches. Escape to quit.",
+                warp_i18n::t!(
+                    "a11y-code-find-result-of",
+                    index = match_index + 1,
+                    count = self.searcher.as_ref(ctx).match_count()
+                )
+                .to_string(),
+                warp_i18n::t!("a11y-code-find-result-help").to_string(),
                 WarpA11yRole::UserAction,
             )
         } else {
-            AccessibilityContent::new_without_help("No results.", WarpA11yRole::UserAction)
+            AccessibilityContent::new_without_help(
+                warp_i18n::t!("a11y-code-find-no-results").to_string(),
+                WarpA11yRole::UserAction,
+            )
         };
         ctx.emit_a11y_content(content);
     }
@@ -392,15 +397,18 @@ impl CodeEditorFind {
         let content = if let Some(match_index) = self.searcher.as_ref(ctx).selected_match() {
             let remaining_matches = self.searcher.as_ref(ctx).match_count();
             AccessibilityContent::new(
-                format!(
-                    "Successfully replaced match. Selected match is {match_index} of {remaining_matches}"
-                ),
-                "Continue pressing Enter to replace more matches, or use up/down arrows to navigate.",
+                warp_i18n::t!(
+                    "a11y-code-find-replace-success",
+                    index = match_index,
+                    remaining = remaining_matches
+                )
+                .to_string(),
+                warp_i18n::t!("a11y-code-find-replace-help").to_string(),
                 WarpA11yRole::UserAction,
             )
         } else {
             AccessibilityContent::new_without_help(
-                "Successfully replaced the last match.",
+                warp_i18n::t!("a11y-code-find-replace-success-last").to_string(),
                 WarpA11yRole::UserAction,
             )
         };
@@ -927,20 +935,20 @@ impl View for CodeEditorFind {
         let match_count = self.searcher.as_ref(app).match_count();
         let selected_match = self.searcher.as_ref(app).selected_match();
         let description = match (match_count, selected_match) {
-            (0, _) | (_, None) => "Find bar for searching text in the editor.".to_string(),
-            (count, Some(current)) => format!(
-                "Find bar with {} matches found. Currently on match {} of {}.",
-                count,
-                current + 1,
-                count
-            ),
+            (0, _) | (_, None) => warp_i18n::t!("a11y-code-find-bar-empty").to_string(),
+            (count, Some(current)) => warp_i18n::t!(
+                "a11y-code-find-bar-with-matches",
+                count = count,
+                index = current + 1
+            )
+            .to_string(),
         };
 
         let is_replace_focused = self.is_replace_open && self.replace_editor.is_focused(app);
-        let help_text = if is_replace_focused {
-            "Replace field focused. Type replacement text, press Enter to replace current match, Tab to return to find field. Use up/down arrows to navigate matches, Escape to close."
+        let help_text: String = if is_replace_focused {
+            warp_i18n::t!("a11y-code-find-help-replace").to_string()
         } else {
-            "Find field focused. Type to search text. Use Enter and Shift-Enter or up/down arrows to navigate between matches. Press Escape to close find bar."
+            warp_i18n::t!("a11y-code-find-help-find").to_string()
         };
 
         Some(AccessibilityContent::new(

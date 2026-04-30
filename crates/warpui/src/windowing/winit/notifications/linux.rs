@@ -15,10 +15,11 @@ pub(super) async fn send_notification(
         on_error,
     } = notification_info;
 
+    use warp_i18n::notification::{truncate, LINUX_MAX};
+    let summary = truncate(notification_content.title(), LINUX_MAX);
+    let body = truncate(notification_content.body(), LINUX_MAX);
     let mut notification = notify_rust::Notification::new();
-    notification
-        .summary(notification_content.title())
-        .body(notification_content.body());
+    notification.summary(&summary).body(&body);
 
     notification
         .show_async()

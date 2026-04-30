@@ -11,6 +11,7 @@ use crate::terminal::History;
 use crate::terminal::TerminalView;
 use crate::ui_components::icons as UIIcon;
 use crate::user_config::themes_dir;
+use warp_i18n::t;
 use lazy_static::lazy_static;
 use markdown_parser::weight::CustomWeight;
 use markdown_parser::FormattedText;
@@ -650,7 +651,7 @@ impl OnboardingAgenticSuggestionsBlock {
                     )
                     .with_child(
                         Text::new(
-                            "Thinking...".to_owned(),
+                            t!("terminal-thinking"),
                             appearance.ui_font_family(),
                             appearance.monospace_font_size(),
                         )

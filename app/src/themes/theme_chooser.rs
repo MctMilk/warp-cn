@@ -846,9 +846,9 @@ impl View for ThemeChooser {
 
     fn accessibility_contents(&self, _: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new(
-                "Theme chooser. Unfortunately, theme chooser window isn't compatible with screen readers yet.",
-                "Press escape to close.",
-                WarpA11yRole::WindowRole,
+            warp_i18n::t!("a11y-theme-chooser-label").to_string(),
+            warp_i18n::t!("a11y-theme-chooser-help").to_string(),
+            WarpA11yRole::WindowRole,
         ))
     }
 

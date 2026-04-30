@@ -522,17 +522,20 @@ impl EditorModel {
                     selection_after
                 };
 
-                let action = if inclusive_contains(&selection_after, start)
+                let action_suffix = if inclusive_contains(&selection_after, start)
                     && inclusive_contains(&selection_after, end)
                 {
-                    "selected"
+                    warp_i18n::t!("a11y-editor-action-suffix-selected").to_string()
                 } else {
-                    "unselected"
+                    warp_i18n::t!("a11y-editor-action-suffix-unselected").to_string()
                 };
-                AccessibilityContent::new(delta, format!(", {action}"), WarpA11yRole::UserAction)
+                AccessibilityContent::new(delta, action_suffix, WarpA11yRole::UserAction)
             }
             (true, false) => {
-                AccessibilityContent::new_without_help("Unselected", WarpA11yRole::UserAction)
+                AccessibilityContent::new_without_help(
+                    warp_i18n::t!("a11y-editor-unselected").to_string(),
+                    WarpA11yRole::UserAction,
+                )
             }
         }
     }
@@ -2229,7 +2232,7 @@ impl EditorModel {
 
         ctx.emit_a11y_content(AccessibilityContent::new(
             self.selected_text(ctx),
-            ", deleted",
+            warp_i18n::t!("a11y-editor-deleted-suffix").to_string(),
             WarpA11yRole::UserAction,
         ));
         self.change_selections(new_selections, ctx);
@@ -2253,7 +2256,7 @@ impl EditorModel {
 
         ctx.emit_a11y_content(AccessibilityContent::new(
             self.selected_text(ctx),
-            ", deleted",
+            warp_i18n::t!("a11y-editor-deleted-suffix").to_string(),
             WarpA11yRole::UserAction,
         ));
         self.change_selections(new_selections, ctx);

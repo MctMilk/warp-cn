@@ -1,5 +1,6 @@
 use enum_iterator::{all, Sequence};
 use itertools::{Either, Itertools};
+use warp_i18n::t;
 use warpui::elements::CornerRadius;
 use warpui::presenter::ChildView;
 use warpui::units::Pixels;
@@ -100,7 +101,7 @@ impl KeybindingsView {
 
         search_editor.update(ctx, |editor, ctx| {
             editor.clear_buffer_and_reset_undo_stack(ctx);
-            editor.set_placeholder_text(settings_view::keybindings::SEARCH_PLACEHOLDER, ctx);
+            editor.set_placeholder_text(settings_view::keybindings::search_placeholder(), ctx);
         });
 
         let search_bar = {
@@ -356,7 +357,11 @@ impl KeybindingsView {
                         .build()
                         .finish(),
                 )
-                .with_child(self.render_text("To toggle this panel".into(), None, appearance))
+                .with_child(self.render_text(
+                    t!("resource-center-keybindings-toggle-hint"),
+                    None,
+                    appearance,
+                ))
                 .with_cross_axis_alignment(CrossAxisAlignment::Center)
                 .finish();
 
@@ -371,7 +376,7 @@ impl KeybindingsView {
             appearance
                 .ui_builder()
                 .link(
-                    "here.".into(),
+                    t!("resource-center-keybindings-settings-link").into(),
                     None,
                     Some(Box::new(|ctx| {
                         ctx.dispatch_typed_action(WorkspaceAction::ConfigureKeybindingSettings {
@@ -394,7 +399,7 @@ impl KeybindingsView {
         Container::new(
             column
                 .with_child(self.render_text(
-                    "Go to settings > keyboard shortcuts to configure custom keybindings".into(),
+                    t!("resource-center-keybindings-configure-message"),
                     None,
                     appearance,
                 ))
@@ -422,15 +427,19 @@ impl KeybindingsView {
             Flex::column().with_cross_axis_alignment(CrossAxisAlignment::Stretch);
 
         let title = match section {
-            KeybindingSection::Essentials => "Essentials",
-            KeybindingSection::Blocks => "Blocks",
-            KeybindingSection::InputEditor => "Input Editor",
-            KeybindingSection::Terminal => "Terminal",
-            KeybindingSection::Fundamentals => "Fundamentals",
+            KeybindingSection::Essentials => t!("resource-center-keybindings-section-essentials"),
+            KeybindingSection::Blocks => t!("resource-center-keybindings-section-blocks"),
+            KeybindingSection::InputEditor => {
+                t!("resource-center-keybindings-section-input-editor")
+            }
+            KeybindingSection::Terminal => t!("resource-center-keybindings-section-terminal"),
+            KeybindingSection::Fundamentals => {
+                t!("resource-center-keybindings-section-fundamentals")
+            }
         };
 
         let mut section_header = self.render_text(
-            title.into(),
+            title,
             Some(UiComponentStyles {
                 font_color: Some(appearance.theme().active_ui_text_color().into()),
                 font_size: Some(SECTION_HEADER_FONT_SIZE),

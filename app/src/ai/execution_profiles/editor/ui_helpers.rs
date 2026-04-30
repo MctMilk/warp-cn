@@ -8,6 +8,7 @@ use crate::Appearance;
 use crate::TemplatableMCPServerManager;
 use pathfinder_geometry::vector::vec2f;
 use uuid::Uuid;
+use warp_i18n::t;
 use warp_core::features::FeatureFlag;
 use warpui::elements::Hoverable;
 use warpui::elements::MouseStateHandle;
@@ -71,7 +72,7 @@ fn render_header_title(appearance: &Appearance) -> Box<dyn Element> {
 
 fn render_header_name_label(appearance: &Appearance) -> Box<dyn Element> {
     Container::new(
-        Text::new("Name", appearance.ui_font_family(), 13.)
+        Text::new(t!("ai-ui-profile-name"), appearance.ui_font_family(), 13.)
             .with_color(appearance.theme().active_ui_text_color().into())
             .finish(),
     )
@@ -656,7 +657,7 @@ pub fn render_plan_auto_sync_toggle(
     .finish();
 
     let label_elem = Text::new(
-        "Plan auto-sync".to_string(),
+        t!("ai-ui-plan-auto-sync"),
         appearance.ui_font_family(),
         13.,
     )
@@ -664,8 +665,7 @@ pub fn render_plan_auto_sync_toggle(
     .finish();
 
     let desc_elem = Text::new(
-        "The plans this agent creates will be automatically added and synced to Warp Drive."
-            .to_string(),
+        t!("ai-ui-plan-auto-sync-desc"),
         appearance.ui_font_family(),
         11.,
     )
@@ -730,7 +730,7 @@ pub fn render_web_search_toggle(
     .finish();
 
     let label_elem = Text::new(
-        "Call web tools".to_string(),
+        t!("ai-ui-call-web-tools"),
         appearance.ui_font_family(),
         13.,
     )
@@ -738,7 +738,7 @@ pub fn render_web_search_toggle(
     .finish();
 
     let desc_elem = Text::new(
-        "The agent may use web search when helpful for completing tasks.".to_string(),
+        t!("ai-ui-call-web-tools-desc"),
         appearance.ui_font_family(),
         11.,
     )

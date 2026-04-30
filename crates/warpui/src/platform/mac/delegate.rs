@@ -332,6 +332,9 @@ impl platform::Delegate for AppDelegate {
         _window_id: WindowId,
         on_error_callback: SendNotificationErrorCallback,
     ) {
+        use warp_i18n::notification::{truncate, MACOS_MAX};
+        let title = truncate(notification_content.title(), MACOS_MAX);
+        let body = truncate(notification_content.body(), MACOS_MAX);
         unsafe {
             let callback: NotificationSendErrorCallback = Box::new(|error| {
                 app::callback_dispatcher().with_mutable_app_context(|ctx| {
@@ -339,8 +342,8 @@ impl platform::Delegate for AppDelegate {
                 })
             });
             sendNotification(
-                make_nsstring(notification_content.title()),
-                make_nsstring(notification_content.body()),
+                make_nsstring(&title),
+                make_nsstring(&body),
                 make_nsstring(notification_content.data().unwrap_or_default()),
                 Box::into_raw(Box::new(callback)) as *const c_void,
                 if notification_content.play_sound() {

@@ -32,6 +32,7 @@ use crate::workspace::WorkspaceAction;
 use warp_core::features::FeatureFlag;
 use warp_core::send_telemetry_from_ctx;
 use warp_core::ui::Icon;
+use warp_i18n::t;
 
 use super::view_model::{ConversationEntry, ConversationListViewModel};
 use warp_editor::editor::NavigationKey;
@@ -660,7 +661,7 @@ fn render_zero_state(
         .with_cross_axis_alignment(CrossAxisAlignment::Center)
         .with_spacing(4.)
         .with_child(
-            Text::new("No conversations yet", appearance.ui_font_family(), 14.)
+            Text::new(t!("ai-ui-no-conversations"), appearance.ui_font_family(), 14.)
                 .with_color(theme.sub_text_color(theme.background()).into_solid())
                 .with_style(Properties::default().weight(Weight::Semibold))
                 .finish(),

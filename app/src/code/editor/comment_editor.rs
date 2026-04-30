@@ -19,6 +19,7 @@ use pathfinder_geometry::vector::Vector2F;
 use std::cell::RefCell;
 use warp_core::ui::{appearance::Appearance, theme::Fill};
 use warp_editor::render::element::VerticalExpansionBehavior;
+use warp_i18n::t;
 use warpui::{
     elements::{
         Border, ChildView, Clipped, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment,
@@ -330,7 +331,7 @@ impl CommentEditor {
             .finish();
 
         let label = Text::new(
-            "Comment imported from GitHub".to_string(),
+            t!("coding-comment-imported-from-github"),
             appearance.ui_font_family(),
             appearance.ui_font_size(),
         )

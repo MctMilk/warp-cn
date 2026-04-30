@@ -1,5 +1,6 @@
 use vec1::{vec1, Vec1};
 use warp_core::{features::FeatureFlag, ui::builder::AnimatedButtonOptions};
+use warp_i18n::t;
 use warpui::{
     elements::{
         Align, Border, ConstrainedBox, Container, CrossAxisAlignment, Element, Flex, Icon,
@@ -47,11 +48,11 @@ pub enum ResourceCenterFooterItem {
 }
 
 impl ResourceCenterFooterItem {
-    pub fn ui_label(&self) -> &'static str {
+    pub fn ui_label(&self) -> String {
         match self {
-            ResourceCenterFooterItem::Docs => "Docs",
-            ResourceCenterFooterItem::Slack => "Slack",
-            ResourceCenterFooterItem::Feedback => "Feedback",
+            ResourceCenterFooterItem::Docs => t!("resource-center-footer-docs"),
+            ResourceCenterFooterItem::Slack => t!("resource-center-footer-slack"),
+            ResourceCenterFooterItem::Feedback => t!("resource-center-footer-feedback"),
         }
     }
 
@@ -331,12 +332,12 @@ impl ResourceCenterView {
         let current_page = self.page_views.get(self.current_view_index).map(|x| x.page);
 
         let header_text = match current_page {
-            Some(ResourceCenterPage::Keybindings) => "Keyboard Shortcuts".to_string(),
+            Some(ResourceCenterPage::Keybindings) => t!("resource-center-header-keybindings"),
             _ => {
                 if FeatureFlag::AvatarInTabBar.is_enabled() {
                     String::new()
                 } else {
-                    "Warp Essentials".to_string()
+                    t!("resource-center-header-essentials")
                 }
             }
         };

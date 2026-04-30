@@ -30,6 +30,7 @@ use warpui::elements::{
 };
 use warpui::platform::Cursor;
 use warpui::text_layout::ClipConfig;
+use warp_i18n::t;
 use warpui::units::Pixels;
 use warpui::{AppContext, Element, EventContext, SingletonEntity, View, ViewContext, ViewHandle};
 
@@ -109,7 +110,7 @@ fn render_comment_file_path_header(
 
         let outdated_chip = Container::new(
             Text::new(
-                "Outdated",
+                t!("coding-comment-outdated"),
                 appearance.ui_font_family(),
                 appearance.ui_font_size(),
             )
@@ -172,7 +173,7 @@ fn render_comment_text_section(
     if is_imported_from_github {
         left_section.add_child(
             Text::new(
-                "From GitHub".to_string(),
+                t!("coding-comment-from-github"),
                 appearance.ui_font_family(),
                 appearance.ui_font_size(),
             )
@@ -475,7 +476,7 @@ impl CommentViewCard {
             _ => source
                 .head()
                 .map(|head| head.title())
-                .unwrap_or_else(|| "Review Comment".to_string()),
+                .unwrap_or_else(|| warp_i18n::t!("code-review-comment-fallback-title")),
         }
     }
 }

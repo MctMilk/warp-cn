@@ -8,6 +8,7 @@ use parking_lot::RwLock;
 use pathfinder_color::ColorU;
 use warp_cli::agent::Harness;
 use warp_cli::skill::SkillSpec;
+use warp_i18n::t;
 use warp_core::channel::ChannelState;
 use warp_core::features::FeatureFlag;
 use warp_core::ui::color::coloru_with_opacity;
@@ -879,7 +880,7 @@ impl ConversationDetailsPanel {
         let ui_font_size = appearance.ui_font_size();
 
         let label_text = Text::new(
-            "Error".to_string(),
+            t!("ai-ui-conversation-error"),
             appearance.ui_font_family(),
             ui_font_size,
         )
@@ -919,7 +920,7 @@ impl ConversationDetailsPanel {
 
         // Section header
         let header = Text::new(
-            "Status".to_string(),
+            t!("ai-ui-conversation-status"),
             appearance.ui_font_family(),
             ui_font_size,
         )
@@ -984,7 +985,7 @@ impl ConversationDetailsPanel {
         let ui_font_size = appearance.ui_font_size();
 
         let label_text = Text::new(
-            "Harness".to_string(),
+            t!("ai-ui-conversation-harness"),
             appearance.ui_font_family(),
             ui_font_size,
         )
@@ -1129,7 +1130,7 @@ impl ConversationDetailsPanel {
         let ui_font_size = appearance.ui_font_size();
 
         let label_text = Text::new(
-            "Artifacts".to_string(),
+            t!("ai-ui-conversation-artifacts"),
             appearance.ui_font_family(),
             ui_font_size,
         )
@@ -1168,7 +1169,7 @@ impl ConversationDetailsPanel {
         let ui_font_size = appearance.ui_font_size();
 
         let header_text = Text::new(
-            "Environment setup commands".to_string(),
+            t!("ai-ui-conversation-env-setup"),
             appearance.ui_font_family(),
             ui_font_size,
         )
@@ -1233,7 +1234,7 @@ impl ConversationDetailsPanel {
 
         // Section header
         let header = Text::new(
-            "Environment details".to_string(),
+            t!("ai-ui-conversation-env-details"),
             appearance.ui_font_family(),
             ui_font_size,
         )
@@ -1389,7 +1390,7 @@ impl ConversationDetailsPanel {
         let theme = appearance.theme();
 
         let label_text = Text::new(
-            "Credits used".to_string(),
+            t!("ai-ui-conversation-credits-used"),
             appearance.ui_font_family(),
             appearance.ui_font_size(),
         )

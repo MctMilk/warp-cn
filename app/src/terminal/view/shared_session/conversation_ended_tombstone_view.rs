@@ -16,6 +16,7 @@ use std::path::Path;
 #[cfg(not(target_family = "wasm"))]
 use warp_cli::agent::Harness;
 use warp_core::paths::home_relative_path;
+use warp_i18n::t;
 
 #[cfg(not(target_family = "wasm"))]
 use crate::ai::ambient_agents::AmbientAgentTask;
@@ -329,7 +330,7 @@ impl ConversationEndedTombstoneView {
 
         if is_transcript {
             return Text::new(
-                "You're viewing a snapshot",
+                t!("terminal-shared-snapshot-title"),
                 appearance.overline_font_family(),
                 appearance.monospace_font_size(),
             )
@@ -388,8 +389,7 @@ impl ConversationEndedTombstoneView {
         let theme = appearance.theme();
         Container::new(
             Text::new(
-                "This shared conversation shows the state when you opened it. \
-                 If the agent is still running, refresh to see the latest progress.",
+                t!("terminal-shared-snapshot-desc"),
                 appearance.overline_font_family(),
                 appearance.monospace_font_size(),
             )

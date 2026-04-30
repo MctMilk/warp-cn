@@ -1,5 +1,6 @@
 use crate::ai::blocklist::view_util::render_provider_icon_button;
 use crate::ai::skills::{SkillOpenOrigin, SkillTelemetryEvent};
+use crate::util::bindings::BindingDescriptionFluentExt;
 use anyhow::Result;
 use lazy_static::lazy_static;
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
@@ -43,7 +44,7 @@ use warpui::{
         Radius, SavePosition, ScrollTarget, ScrollToPositionMode, ScrollbarWidth, Shrinkable,
         SizeConstraintCondition, SizeConstraintSwitch, Stack, Text,
     },
-    keymap::{EditableBinding, FixedBinding, Keystroke},
+    keymap::{BindingDescription, EditableBinding, FixedBinding, Keystroke},
     platform::{Cursor, OperatingSystem},
     ui_components::components::{Coords, UiComponent, UiComponentStyles},
     AppContext, Element, Entity, FocusContext, ModelHandle, SingletonEntity, TypedActionView, View,
@@ -121,6 +122,7 @@ use ai::diff_validation::{
     fuzzy_match_diffs, fuzzy_match_v4a_diffs, parse_line_numbers, DiffDelta, DiffType, ParsedDiff,
     SearchAndReplace, V4AHunk,
 };
+use warp_i18n::t;
 
 const REQUESTED_EDIT_CANCEL_LABEL: &str = "Cancel";
 const REQUESTED_EDIT_REFINE_LABEL: &str = "Refine";
@@ -211,7 +213,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         EDIT_REQUESTED_EDIT_NAME,
-        "Edit Code Diff",
+        BindingDescription::fluent("binding-code-diff-edit"),
         CodeDiffViewAction::Edit,
     )
     .with_context_predicate(id!(CodeDiffView::ui_name()) & !id!(DISPATCHED_REQUESTED_EDIT_EXPANDED))
@@ -2001,7 +2003,7 @@ impl CodeDiffView {
         if Self::is_rename_without_changes(diff_type) {
             let placeholder = Container::new(
                 Text::new(
-                    "File renamed without changes",
+                    t!("ai-ui-file-renamed-no-change"),
                     appearance.monospace_font_family(),
                     appearance.monospace_font_size(),
                 )

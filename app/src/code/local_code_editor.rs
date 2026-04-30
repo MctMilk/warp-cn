@@ -95,6 +95,7 @@ use super::language_server_extension::ProcessedDiagnostic;
 use super::lsp_telemetry::LspTelemetryEvent;
 use super::ImmediateSaveError;
 use warp_core::send_telemetry_from_ctx;
+use warp_i18n::t;
 
 type SaveCallback =
     Box<dyn FnOnce(SaveOutcome, &mut ViewContext<LocalCodeEditorView>) + Send + Sync + 'static>;
@@ -2298,7 +2299,7 @@ pub fn render_unsaved_changes_banner(
             Shrinkable::new(
                 1.,
                 Text::new(
-                    "This file has saved changes that are not reflected here.",
+                    t!("coding-file-stale-warning"),
                     appearance.ui_font_family(),
                     appearance.ui_font_size(),
                 )

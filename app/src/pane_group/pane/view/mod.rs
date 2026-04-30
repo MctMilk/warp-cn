@@ -7,7 +7,7 @@ use crate::{
     pane_group::{Direction, SplitPaneState, TabBarHoverIndex},
     server::telemetry::SharingDialogSource,
     settings::{PaneSettings, PaneSettingsChangedEvent},
-    util::bindings::CustomAction,
+    util::bindings::{BindingDescriptionFluentExt, CustomAction},
 };
 
 use super::{
@@ -20,7 +20,7 @@ use warpui::{
         Border, Container, DropTarget, DropTargetData, Flex, MainAxisSize, ParentElement,
         SavePosition, Shrinkable,
     },
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     presenter::ChildView,
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle,
@@ -41,7 +41,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "pane:share_pane_contents",
-        "Share pane",
+        BindingDescription::fluent("binding-pane-share-contents"),
         PaneAction::ShareContents,
     )
     .with_custom_action(CustomAction::SharePaneContents)

@@ -998,8 +998,8 @@ impl View for AuthViewBody {
 
     fn accessibility_contents(&self, _: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new(
-            "Welcome to Warp!",
-            "Press enter to open your browser to Sign Up or Sign In.",
+            warp_i18n::t!("a11y-auth-welcome-label").to_string(),
+            warp_i18n::t!("a11y-auth-welcome-help").to_string(),
             WarpA11yRole::HelpRole,
         ))
     }

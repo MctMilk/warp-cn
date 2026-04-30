@@ -19,6 +19,7 @@ use warpui::keymap::{FixedBinding, Keystroke};
 use warpui::platform::Cursor;
 use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
 use warpui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use warp_i18n::t;
 
 // Modal dimensions based on Figma design.
 const MODAL_WIDTH: f32 = 440.;
@@ -126,7 +127,7 @@ impl AgentTypeSelector {
         let theme = appearance.theme();
 
         let title = Text::new(
-            "Choose your agent".to_string(),
+            t!("ai-ui-choose-agent"),
             appearance.ui_font_family(),
             TITLE_FONT_SIZE,
         )
@@ -258,7 +259,7 @@ impl AgentTypeSelector {
 
             if is_suggested {
                 let suggested_text =
-                    Text::new("Suggested".to_string(), font_family, OPTION_DESC_FONT_SIZE)
+                    Text::new(t!("ai-ui-suggested-badge"), font_family, OPTION_DESC_FONT_SIZE)
                         .with_style(Properties::default().weight(Weight::Medium))
                         .with_color(badge_text_color)
                         .finish();

@@ -6,3 +6,4 @@ pub mod ids;
 pub mod persistence;
 
 pub use auth::UserUid;
+pub use warp_graphql::RemoteString;

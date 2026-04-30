@@ -1,5 +1,6 @@
 use settings::Setting as _;
 use warp_core::ui::Icon;
+use warp_i18n::t;
 use warpui::elements::{
     ChildView, ConstrainedBox, Container, CrossAxisAlignment, Flex, MainAxisAlignment,
     MainAxisSize, MouseStateHandle, ParentElement, Shrinkable, SizeConstraintCondition,
@@ -141,7 +142,7 @@ impl View for AwsBedrockCredentialsErrorView {
 
         let make_alert_text = || {
             Text::new(
-                "AWS credentials expired or missing",
+                t!("ai-ui-aws-creds-error"),
                 appearance.ui_font_family(),
                 14.,
             )
@@ -190,7 +191,7 @@ impl View for AwsBedrockCredentialsErrorView {
             .finish();
 
             let checkbox_label = Text::new(
-                "Always run automatically",
+                t!("ai-ui-always-auto-run"),
                 appearance.ui_font_family(),
                 appearance.monospace_font_size() - 1.,
             )

@@ -1,5 +1,6 @@
 use pathfinder_geometry::vector::vec2f;
 use warp_core::ui::theme::{phenomenon::PhenomenonStyle, Fill};
+use warp_i18n::t;
 use warpui::assets::asset_cache::AssetSource;
 use warpui::elements::{
     CacheOption, ChildAnchor, ChildView, ConstrainedBox, Container, CornerRadius,
@@ -98,7 +99,7 @@ pub fn render_welcome_banner(
 
     // Title
     let title = Text::new(
-        "Introducing universal agent support: level up any coding agent with Warp",
+        t!("onboarding-universal-agent-support"),
         appearance.ui_font_family(),
         20.,
     )

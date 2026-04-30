@@ -120,6 +120,7 @@ use super::common::{
 };
 use super::imported_comments::render_imported_comments;
 use super::orchestration;
+use warp_i18n::t;
 use super::todos::render_todos;
 use super::CONTENT_HORIZONTAL_PADDING;
 use super::{
@@ -3615,7 +3616,7 @@ fn render_collapsible_debug_output(
         // "Debug output" label
         row.add_child(
             Text::new(
-                "Debug output".to_string(),
+                t!("ai-ui-debug-output"),
                 appearance.ai_font_family(),
                 appearance.monospace_font_size(),
             )

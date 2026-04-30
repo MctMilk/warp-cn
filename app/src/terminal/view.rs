@@ -499,7 +499,7 @@ use crate::terminal::ShellHost;
 use crate::terminal::{
     block_list_element::BlockHoverAction,
     // find::{Event as FindEvent, Find, FindDirection},
-    input::{Event as InputEvent, Input, INPUT_A11Y_HELPER, INPUT_A11Y_LABEL},
+    input::{input_a11y_helper, input_a11y_label, Event as InputEvent, Input},
     model::block::SerializedBlock,
     shell::ShellType,
     terminal_size_element::TerminalSizeElement,
@@ -801,20 +801,35 @@ pub enum NotificationsTrigger {
     PasswordPrompt,
 }
 
+/// i18n wrapper around `NotificationSendError::notifications_error_banner_title`.
+/// The upstream method (in `warpui_core`) returns the English string; we translate
+/// at the client edge so the bundle stays local to this crate.
+fn localized_notifications_error_banner_title(error: &NotificationSendError) -> String {
+    match error {
+        NotificationSendError::PermissionsDenied
+        | NotificationSendError::PermissionsNotYetGranted => {
+            warp_i18n::t!("banner-notifications-error-title-permissions")
+        }
+        NotificationSendError::Other { .. } => {
+            warp_i18n::t!("banner-notifications-error-title-other")
+        }
+    }
+}
+
 impl NotificationsTrigger {
-    pub fn discovery_banner_copy(&self) -> &'static str {
+    pub fn discovery_banner_copy(&self) -> String {
         match self {
             NotificationsTrigger::LongRunningCommand(..) => {
-                "Warp can notify you when long-running commands finish."
+                warp_i18n::t!("banner-notifications-trigger-long-running")
             }
             NotificationsTrigger::AgentTaskCompleted(..) => {
-                "Warp can notify you when an agent finishes responding."
+                warp_i18n::t!("banner-notifications-trigger-agent-task")
             }
             NotificationsTrigger::NeedsAttention => {
-                "Warp can notify you when a command or agent needs your attention."
+                warp_i18n::t!("banner-notifications-trigger-needs-attention")
             }
             NotificationsTrigger::PasswordPrompt => {
-                "Warp can notify you when you're prompted to enter a password."
+                warp_i18n::t!("banner-notifications-trigger-password")
             }
         }
     }
@@ -842,35 +857,48 @@ impl NotificationsTrigger {
 
         let (title_suffix, body_prefix) = match self {
             LongRunningCommand(command_succeeded, block_duration) => {
-                let status = if *command_succeeded {
-                    "finished"
-                } else {
-                    "failed"
-                };
-
                 let duration_seconds = block_duration.as_secs_f32();
                 let duration_seconds = if duration_seconds >= 1. {
                     format!("{}", duration_seconds.round() as usize)
                 } else {
                     format!("{duration_seconds:.1}")
                 };
-
+                let title_suffix = if *command_succeeded {
+                    warp_i18n::t!(
+                        "notification-title-suffix-long-running-finished",
+                        duration = duration_seconds
+                    )
+                } else {
+                    warp_i18n::t!(
+                        "notification-title-suffix-long-running-failed",
+                        duration = duration_seconds
+                    )
+                };
                 (
-                    format!(" {status} after {duration_seconds}s"),
-                    "Latest output: ".to_string(),
+                    title_suffix,
+                    warp_i18n::t!("notification-body-prefix-latest-output"),
                 )
             }
             AgentTaskCompleted(command_succeeded) => {
                 if *command_succeeded {
-                    (" finished".to_string(), "Latest output: ".to_string())
+                    (
+                        warp_i18n::t!("notification-title-suffix-agent-finished"),
+                        warp_i18n::t!("notification-body-prefix-latest-output"),
+                    )
                 } else {
-                    (" failed".to_string(), "Error: ".to_string())
+                    (
+                        warp_i18n::t!("notification-title-suffix-agent-failed"),
+                        warp_i18n::t!("notification-body-prefix-error"),
+                    )
                 }
             }
-            NotificationsTrigger::NeedsAttention => (" blocked".to_string(), "".to_string()),
+            NotificationsTrigger::NeedsAttention => (
+                warp_i18n::t!("notification-title-suffix-needs-attention"),
+                String::new(),
+            ),
             PasswordPrompt => (
-                " is waiting for a password".to_string(),
-                "Latest output: ".to_string(),
+                warp_i18n::t!("notification-title-suffix-password"),
+                warp_i18n::t!("notification-body-prefix-latest-output"),
             ),
         };
 
@@ -885,9 +913,10 @@ impl NotificationsTrigger {
         let base_command = command.trim_start();
         let base_command_char_len = base_command.chars().count();
 
-        // Reduce the max character count of the command by 2 for the surrounding quotes
-        let title_prefix_max_char_length =
-            UserNotification::MAX_TITLE_LENGTH - title_suffix.chars().count() - 2;
+        // Budget = max length minus the title suffix, surrounding quotes (2) and
+        // the space we add between the quoted command and the suffix (1).
+        let title_prefix_max_char_length = UserNotification::MAX_TITLE_LENGTH
+            .saturating_sub(title_suffix.chars().count() + 3);
 
         let title_prefix = if title_prefix_max_char_length >= base_command_char_len {
             // The command fits entirely within the title so we can use it as is
@@ -897,7 +926,7 @@ impl NotificationsTrigger {
             // few characters (minus 3 for the ellipsis) to show
             let end = base_command
                 .chars()
-                .take(title_prefix_max_char_length - 3)
+                .take(title_prefix_max_char_length.saturating_sub(3))
                 .map(|c| c.len_utf8())
                 .sum();
             format!("'{}...'", base_command[..end].trim_end())
@@ -909,8 +938,10 @@ impl NotificationsTrigger {
         let base_output = output.trim_end();
         let base_output_char_len = base_output.chars().count();
 
-        let body_suffix_max_char_length =
-            UserNotification::MAX_BODY_LENGTH - body_prefix.chars().count();
+        // When body_prefix is non-empty we insert one space between prefix and suffix.
+        let body_prefix_separator_len = usize::from(!body_prefix.is_empty());
+        let body_suffix_max_char_length = UserNotification::MAX_BODY_LENGTH
+            .saturating_sub(body_prefix.chars().count() + body_prefix_separator_len);
 
         let body_suffix = if body_suffix_max_char_length >= base_output_char_len {
             // The output fits entirely within the body so we can use it as is
@@ -922,15 +953,21 @@ impl NotificationsTrigger {
                 - base_output
                     .chars()
                     .rev()
-                    .take(body_suffix_max_char_length - 3)
+                    .take(body_suffix_max_char_length.saturating_sub(3))
                     .map(|c| c.len_utf8())
                     .sum::<usize>();
             format!("...{}", base_output[start..].trim_start())
         };
 
+        let body = if body_prefix.is_empty() {
+            body_suffix
+        } else {
+            format!("{body_prefix} {body_suffix}")
+        };
+
         BlockNotification {
-            title: format!("{title_prefix}{title_suffix}"),
-            body: format!("{body_prefix}{body_suffix}"),
+            title: format!("{title_prefix} {title_suffix}"),
+            body,
         }
     }
 }
@@ -8542,7 +8579,7 @@ impl TerminalView {
             )));
 
         let a11y_content = AccessibilityContent::new(
-            format!("{title} recognized."),
+            warp_i18n::t!("a11y-terminal-banner-recognized", title = title),
             a11y_message,
             WarpA11yRole::TextRole,
         );
@@ -8656,7 +8693,7 @@ impl TerminalView {
 
         let a11y_content = AccessibilityContent::new(
             trigger.discovery_banner_copy(),
-            "You can enable notifications through the command palette.",
+            warp_i18n::t!("banner-notifications-a11y-help"),
             WarpA11yRole::TextRole,
         );
         ctx.emit_a11y_content(a11y_content);
@@ -8690,12 +8727,12 @@ impl TerminalView {
             .notifications_error_banner
             .error
             .as_ref()
-            .map(|e| e.notifications_error_banner_title())
-            .unwrap_or("Error sending notification");
+            .map(localized_notifications_error_banner_title)
+            .unwrap_or_else(|| warp_i18n::t!("banner-notifications-error-title-generic"));
 
         let a11y_content = AccessibilityContent::new(
             banner_title,
-            "Make sure you have enabled access for Warp notifications in System Preferences.",
+            warp_i18n::t!("banner-notifications-error-a11y-help"),
             WarpA11yRole::TextRole,
         );
         ctx.emit_a11y_content(a11y_content);
@@ -13462,8 +13499,11 @@ impl TerminalView {
             });
 
             let a11y_content = AccessibilityContent::new(
-                format!("Suggested corrected command: {}", correction.command),
-                "Press right arrow to insert or keep editing to ignore",
+                warp_i18n::t!(
+                    "a11y-terminal-correction-suggested",
+                    command = correction.command.as_str()
+                ),
+                warp_i18n::t!("a11y-terminal-correction-help"),
                 WarpA11yRole::HelpRole,
             );
             ctx.emit_a11y_content(a11y_content);
@@ -19588,7 +19628,7 @@ impl TerminalView {
                     let password_trigger = NotificationsTrigger::NeedsAttention;
                     let notification_content = password_trigger.create_notification_content(
                         active_block.command_to_string(),
-                        "Command is waiting for a password".to_string(),
+                        warp_i18n::t!("notification-body-password-prompt"),
                     );
                     ctx.emit(Event::SendNotification(notification_content));
                     send_telemetry_from_ctx!(
@@ -21713,13 +21753,13 @@ impl TerminalView {
                 .notifications_error_banner
                 .error
                 .as_ref()
-                .map(|e| e.notifications_error_banner_title())
-                .unwrap_or("Error sending notification");
+                .map(localized_notifications_error_banner_title)
+                .unwrap_or_else(|| warp_i18n::t!("banner-notifications-error-title-generic"));
 
             inline_banners.insert(
                 state.banner_id,
                 render_inline_notifications_error_banner(
-                    banner_title,
+                    &banner_title,
                     state,
                     &self.inline_banners_state.notifications_error_banner.error,
                     appearance,
@@ -23053,20 +23093,34 @@ impl TerminalView {
     ) -> Option<AccessibilityContent> {
         let model = self.model.lock();
         model.block_list().block_at(index).map(|block| {
+            let exit_code_str = block.exit_code().value().to_string();
             let status = if block.has_failed() {
-                format!("failed, status code {}", block.exit_code().value())
+                warp_i18n::t!(
+                    "a11y-terminal-block-status-failed",
+                    code = exit_code_str.as_str()
+                )
             } else if block.is_background() {
-                "background".to_string()
+                warp_i18n::t!("a11y-terminal-block-status-background")
             } else if block.is_done() {
-                "succeeded".to_string()
+                warp_i18n::t!("a11y-terminal-block-status-succeeded")
             } else {
-                "in progress".to_string()
+                warp_i18n::t!("a11y-terminal-block-status-in-progress")
             };
+            let command = block.command_to_string();
+            let index_str = index.to_string();
             AccessibilityContent::new(
-                format!("Block {index}: {}, {}.\n", block.command_to_string(), status),
+                format!(
+                    "{}\n",
+                    warp_i18n::t!(
+                        "a11y-terminal-block-summary",
+                        index = index_str.as_str(),
+                        command = command.as_str(),
+                        status = status.as_str()
+                    )
+                ),
                 // TODO (a11y) Keybindings should be taken from the actual user's
                 // configuration
-                "Press cmd-C to read and copy both command and output, and cmd-option-shift-C to read and copy output only. Press cmd-B to bookmark the block: you could navigate between bookmarked blocks quickly using option-up and option-down.",
+                warp_i18n::t!("a11y-terminal-block-help"),
                 WarpA11yRole::TextRole,
             )
         })
@@ -24091,7 +24145,7 @@ impl TypedActionView for TerminalView {
             }
             BookmarkBlock(_) | BookmarkSelectedBlock => {
                 Custom(AccessibilityContent::new_without_help(
-                    "Toggle Bookmark block",
+                    warp_i18n::t!("a11y-terminal-toggle-bookmark"),
                     WarpA11yRole::TextRole,
                 ))
             }
@@ -24101,50 +24155,59 @@ impl TypedActionView for TerminalView {
                     .tail()
                     .and_then(|index| self.selected_block_accessibility_content(index))
                 {
-                    let num_selected_text =
-                        format!("Selected {} blocks.", self.num_non_hidden_selected_blocks());
+                    let count_str = self.num_non_hidden_selected_blocks().to_string();
+                    let num_selected_text = warp_i18n::t!(
+                        "a11y-terminal-selected-blocks",
+                        count = count_str.as_str()
+                    );
                     content.value = format!("{}\n{}", num_selected_text, content.value);
                     Custom(content)
                 } else {
                     Empty
                 }
             }
-            SelectAllBlocks => Custom(AccessibilityContent::new_without_help(
-                format!(
-                    "Selected all {} blocks.",
-                    self.num_non_hidden_selected_blocks()
-                ),
-                WarpA11yRole::TextRole,
-            )),
+            SelectAllBlocks => {
+                let count_str = self.num_non_hidden_selected_blocks().to_string();
+                Custom(AccessibilityContent::new_without_help(
+                    warp_i18n::t!(
+                        "a11y-terminal-selected-all-blocks",
+                        count = count_str.as_str()
+                    ),
+                    WarpA11yRole::TextRole,
+                ))
+            }
             ScrollToBottomOfSelectedBlocks => Custom(AccessibilityContent::new_without_help(
-                "Scrolled to bottom of selected block".to_string(),
+                warp_i18n::t!("a11y-terminal-scrolled-bottom-selected"),
                 WarpA11yRole::TextRole,
             )),
             ScrollToTopOfSelectedBlocks => Custom(AccessibilityContent::new_without_help(
-                "Scrolled to top of selected block".to_string(),
+                warp_i18n::t!("a11y-terminal-scrolled-top-selected"),
                 WarpA11yRole::TextRole,
             )),
             ScrollToBottomOfOverhangingBlock(_) => Custom(AccessibilityContent::new_without_help(
-                "Scrolled to bottom of bottommost visible block".to_string(),
+                warp_i18n::t!("a11y-terminal-scrolled-bottom-overhanging"),
                 WarpA11yRole::TextRole,
             )),
             CopyOutputs => {
                 let mut outputs = vec![];
                 self.with_non_hidden_selected_blocks(
                     |block| {
-                        outputs.push(format!(
-                            "Block {}.\nOutput: {}",
-                            block.index(),
-                            block.output_to_string()
+                        let index_str = block.index().to_string();
+                        let output = block.output_to_string();
+                        outputs.push(warp_i18n::t!(
+                            "a11y-terminal-block-output-entry",
+                            index = index_str.as_str(),
+                            output = output.as_str()
                         ));
                     },
                     ctx,
                 );
-                let text = format!(
-                    "Copied {} block outputs.\n{}",
-                    outputs.len(),
-                    outputs.join("\n")
+                let count_str = outputs.len().to_string();
+                let header = warp_i18n::t!(
+                    "a11y-terminal-copied-block-outputs-header",
+                    count = count_str.as_str()
                 );
+                let text = format!("{}\n{}", header, outputs.join("\n"));
                 Custom(AccessibilityContent::new_without_help(
                     text,
                     WarpA11yRole::TextRole,
@@ -24154,16 +24217,24 @@ impl TypedActionView for TerminalView {
                 let mut blocks = vec![];
                 self.with_non_hidden_selected_blocks(
                     |block| {
-                        blocks.push(format!(
-                            "Block {}: {}. Output: {}",
-                            block.index(),
-                            block.command_to_string(),
-                            block.output_to_string()
+                        let index_str = block.index().to_string();
+                        let command = block.command_to_string();
+                        let output = block.output_to_string();
+                        blocks.push(warp_i18n::t!(
+                            "a11y-terminal-block-copy-entry",
+                            index = index_str.as_str(),
+                            command = command.as_str(),
+                            output = output.as_str()
                         ));
                     },
                     ctx,
                 );
-                let text = format!("Copied {} blocks.\n{}", blocks.len(), blocks.join("\n"));
+                let count_str = blocks.len().to_string();
+                let header = warp_i18n::t!(
+                    "a11y-terminal-copied-blocks-header",
+                    count = count_str.as_str()
+                );
+                let text = format!("{}\n{}", header, blocks.join("\n"));
                 Custom(AccessibilityContent::new_without_help(
                     text,
                     WarpA11yRole::TextRole,
@@ -24171,37 +24242,43 @@ impl TypedActionView for TerminalView {
             }
             FocusInputAndClearSelection => {
                 Custom(AccessibilityContent::new(
-                    INPUT_A11Y_LABEL,
+                    input_a11y_label(),
                     // TODO (a11y) use bindings from user settings
-                    INPUT_A11Y_HELPER,
+                    input_a11y_helper(),
                     WarpA11yRole::TextareaRole,
                 ))
             }
             KeyDown(key) => {
                 let label = if key.eq("\x1b") {
-                    INPUT_A11Y_LABEL
+                    input_a11y_label()
                 } else {
-                    key
+                    key.to_string()
                 };
                 Custom(AccessibilityContent::new_without_help(
                     label,
                     WarpA11yRole::TextareaRole,
                 ))
             }
-            OpenBlockFilterEditor(block_index) => Custom(AccessibilityContent::new_without_help(
-                format!("Open block filter editor for block {block_index}"),
-                WarpA11yRole::TextRole,
-            )),
+            OpenBlockFilterEditor(block_index) => {
+                let index_str = block_index.to_string();
+                Custom(AccessibilityContent::new_without_help(
+                    warp_i18n::t!(
+                        "a11y-terminal-open-block-filter",
+                        index = index_str.as_str()
+                    ),
+                    WarpA11yRole::TextRole,
+                ))
+            }
             ShowInitializationBlock => Custom(AccessibilityContent::new_without_help(
-                "Showed initialization block",
+                warp_i18n::t!("a11y-terminal-showed-init-block"),
                 WarpA11yRole::TextareaRole,
             )),
             ShowWarpifySettings => Custom(AccessibilityContent::new_without_help(
-                "Opened Warpify Settings",
+                warp_i18n::t!("a11y-terminal-opened-warpify-settings"),
                 WarpA11yRole::ButtonRole,
             )),
             OpenFilesPalette { .. } => Custom(AccessibilityContent::new_without_help(
-                "Opened file search palette",
+                warp_i18n::t!("a11y-terminal-opened-files-palette"),
                 WarpA11yRole::ButtonRole,
             )),
             InsertCommandCorrection { .. }
@@ -24270,28 +24347,27 @@ impl TypedActionView for TerminalView {
             OpenCodeInWarp { .. } => ActionAccessibilityContent::from_debug(),
             OpenInWarpBanner(action) => self.open_in_warp_banner_accessibility_content(*action),
             OpenAIBlockAttachedBlocksMenu { .. } => Custom(AccessibilityContent::new_without_help(
-                "Open list of blocks attached as context to this AI query.".to_owned(),
+                warp_i18n::t!("a11y-terminal-ai-attached-blocks-menu"),
                 WarpA11yRole::PopoverRole,
             )),
             OpenAIBlockOverflowMenu { .. } => Custom(AccessibilityContent::new_without_help(
-                "Open overflow menu with copy options for this AI block.".to_owned(),
+                warp_i18n::t!("a11y-terminal-ai-overflow-menu"),
                 WarpA11yRole::PopoverRole,
             )),
             RewindAIConversation { .. } => Custom(AccessibilityContent::new_without_help(
-                "Show confirmation dialog to rewind to before this point in the AI conversation."
-                    .to_owned(),
+                warp_i18n::t!("a11y-terminal-ai-rewind-confirm"),
                 WarpA11yRole::ButtonRole,
             )),
             ExecuteRewindAIConversation { .. } => Custom(AccessibilityContent::new_without_help(
-                "Execute rewind to before this point in the AI conversation.".to_owned(),
+                warp_i18n::t!("a11y-terminal-ai-rewind-execute"),
                 WarpA11yRole::ButtonRole,
             )),
             SelectAIAttachedBlock(_) => Custom(AccessibilityContent::new_without_help(
-                "Click on a block attached as context to this AI query.".to_owned(),
+                warp_i18n::t!("a11y-terminal-ai-select-attached-block"),
                 WarpA11yRole::ButtonRole,
             )),
             PickRepoToOpen => Custom(AccessibilityContent::new_without_help(
-                "Use file picker to select a git repository".to_owned(),
+                warp_i18n::t!("a11y-terminal-pick-repo"),
                 WarpA11yRole::PopoverRole,
             )),
             #[cfg(feature = "voice_input")]

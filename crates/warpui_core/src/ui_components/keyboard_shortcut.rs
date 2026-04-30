@@ -194,7 +194,7 @@ impl Key {
                 if OperatingSystem::get().is_mac() {
                     "⌘".into()
                 } else {
-                    "Logo".into()
+                    "Win".into()
                 }
             }
             Key::Option => {

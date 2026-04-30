@@ -922,8 +922,8 @@ impl Action {
             | Self::NewAgentConversation
             | Self::FocusCloudMode => W::default(),
             Self::NewTab => W::ShowPrimaryWindow(WindowActivationFallbackBehavior::Notify {
-                title: "New tab created".to_owned(),
-                description: "Go to Warp to see your new tab.".to_owned(),
+                title: warp_i18n::t!("notification-new-tab-title"),
+                description: warp_i18n::t!("notification-new-tab-body"),
             }),
             Self::NewWindow => W::Nothing,
         }

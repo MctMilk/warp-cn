@@ -13,13 +13,15 @@ use warpui::{
         ParentElement as _, ParentOffsetBounds, Radius, Stack,
     },
     fonts::Weight,
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     platform::{file_picker::FilePickerError, Cursor, FilePickerConfiguration},
     ui_components::components::{UiComponent as _, UiComponentStyles},
     AppContext, Element, Entity, SingletonEntity as _, TypedActionView, View, ViewContext,
 };
 
-use crate::util::bindings::{keybinding_name_to_display_string, BindingGroup, CustomAction};
+use crate::util::bindings::{
+    keybinding_name_to_display_string, BindingDescriptionFluentExt, BindingGroup, CustomAction,
+};
 
 const BUTTON_MIN_WIDTH: f32 = 149.;
 
@@ -29,7 +31,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "project_buttons:open_repository",
-            "Open repository",
+            BindingDescription::fluent("binding-project-buttons-open-repository"),
             ProjectButtonsAction::OpenRepository,
         )
         .with_context_predicate(id!("ProjectButons"))
@@ -37,7 +39,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::OpenRepository),
         EditableBinding::new(
             "project_buttons:create_new_project",
-            "Create new project",
+            BindingDescription::fluent("binding-project-buttons-create-new-project"),
             ProjectButtonsAction::CreateProject,
         )
         .with_context_predicate(id!("ProjectButons"))

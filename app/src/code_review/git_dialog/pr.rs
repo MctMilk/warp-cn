@@ -5,6 +5,7 @@
 //! a toast with a clickable "Open PR" link.
 
 use warp_core::ui::appearance::Appearance;
+use warp_i18n::t;
 use warpui::{
     elements::{
         ClippedScrollStateHandle, Container, Element, Flex, MouseStateHandle, ParentElement, Text,
@@ -42,16 +43,16 @@ pub struct PrState {
     changes_scroll_state: ClippedScrollStateHandle,
 }
 
-pub(super) fn confirm_label_for() -> &'static str {
-    "Create PR"
+pub(super) fn confirm_label_for() -> String {
+    warp_i18n::t!("code-review-git-pr-button-create")
 }
 
 pub(super) fn confirm_icon_for() -> Icon {
     Icon::Github
 }
 
-fn loading_label_for() -> &'static str {
-    "Creating\u{2026}"
+fn loading_label_for() -> String {
+    warp_i18n::t!("code-review-git-pr-loading-label")
 }
 
 /// PR mode has no prerequisites beyond a branch with commits; confirm is
@@ -225,9 +226,9 @@ pub(super) fn show_pr_created_toast(pr_info: &PrInfo, ctx: &mut ViewContext<GitD
     let window_id = ctx.window_id();
     let url = pr_info.url.clone();
     ToastStack::handle(ctx).update(ctx, |toast_stack, ctx| {
-        let link = ToastLink::new("Open PR".to_string()).with_href(url);
+        let link = ToastLink::new(warp_i18n::t!("code-review-git-pr-toast-open-link")).with_href(url);
         let toast =
-            DismissibleToast::default("PR successfully created.".to_string()).with_link(link);
+            DismissibleToast::default(warp_i18n::t!("code-review-git-pr-toast-created")).with_link(link);
         toast_stack.add_ephemeral_toast(toast, window_id, ctx);
     });
 }
@@ -252,7 +253,7 @@ fn render_changes_section(state: &PrState, appearance: &Appearance) -> Box<dyn E
     let main_color = theme.main_text_color(theme.surface_1()).into_solid();
 
     let label = Text::new(
-        "Changes",
+        t!("coding-git-changes"),
         appearance.ui_font_family(),
         appearance.ui_font_size(),
     )

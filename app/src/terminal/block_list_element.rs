@@ -153,10 +153,9 @@ const LINEAR_SCROLLING: ScrollingAcceleration = ScrollingAcceleration::Polynomia
 /// have a height that extends down to the bottom of the window when there's a horizontal scroll bar, which messes with the on-hover behavior.
 const BLOCK_HOVER_BUTTON_HEIGHT: f32 = 28.;
 
-const TAG_AGENT_FOR_ASSISTANCE_TEXT: &str = "Tag agent for assistance";
-
-const SAVE_AS_WORKFLOW_TEXT: &str = "Save as Workflow";
-const SAVE_AS_WORKFLOW_SECRETS_TEXT: &str = "Blocks containing secrets cannot be saved.";
+fn tag_agent_text() -> String { warp_i18n::t!("terminal-tag-agent") }
+fn save_as_workflow_text() -> String { warp_i18n::t!("terminal-save-as-workflow") }
+fn save_as_workflow_secrets_text() -> String { warp_i18n::t!("terminal-workflow-secrets-warning") }
 
 enum ScrollingAcceleration {
     Polynomial(f32),
@@ -1164,18 +1163,18 @@ impl BlockListElement {
                 if has_active_long_running_command && active_block.index() == block_index {
                     (
                         Some(TerminalAction::SetInputModeAgent),
-                        TAG_AGENT_FOR_ASSISTANCE_TEXT,
+                        tag_agent_text(),
                     )
                 } else {
                     (
                         Some(TerminalAction::AskAIAssistant { block_index }),
-                        *ATTACH_AS_AGENT_MODE_CONTEXT_TEXT,
+                        ATTACH_AS_AGENT_MODE_CONTEXT_TEXT.to_string(),
                     )
                 }
             } else {
                 (
                     Some(TerminalAction::AskAIAssistant { block_index }),
-                    ASK_AI_ASSISTANT_TEXT,
+                    ASK_AI_ASSISTANT_TEXT.to_string(),
                 )
             };
 
@@ -1227,7 +1226,7 @@ impl BlockListElement {
                 render_hoverable_block_button(
                     icon,
                     Some(ToolbeltButtonTooltip {
-                        label: SAVE_AS_WORKFLOW_SECRETS_TEXT.to_owned(),
+                        label: save_as_workflow_secrets_text(),
                         tool_tip_below_button: should_render_tooltip_below_button,
                     }),
                     false,
@@ -1247,7 +1246,7 @@ impl BlockListElement {
                 render_hoverable_block_button(
                     icon,
                     Some(ToolbeltButtonTooltip {
-                        label: SAVE_AS_WORKFLOW_TEXT.to_owned(),
+                        label: save_as_workflow_text(),
                         tool_tip_below_button: should_render_tooltip_below_button,
                     }),
                     false,
@@ -3407,9 +3406,9 @@ impl Element for BlockListElement {
                     // we want to show different text in the seperator if this is an indvidual conversation
                     // restored from the command palette
                     let banner_intro_text = if is_historical_conversation_restoration {
-                        "Conversation restored".to_string()
+                        warp_i18n::t!("terminal-conversation-restored")
                     } else {
-                        "Previous session".to_string()
+                        warp_i18n::t!("terminal-previous-session")
                     };
 
                     let separator_text =

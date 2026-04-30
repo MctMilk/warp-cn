@@ -107,7 +107,7 @@ impl Key {
     fn text(&self, is_lowercase_modifier: bool) -> Cow<'static, str> {
         let is_mac = OperatingSystem::get().is_mac();
         let mut text: Cow<'static, str> = match self {
-            Key::Command => if is_mac { "⌘" } else { "Logo" }.into(),
+            Key::Command => if is_mac { "⌘" } else { "Win" }.into(),
             Key::Option => if is_mac { "⌥" } else { "Alt" }.into(),
             Key::Control => if is_mac { "⌃" } else { "Ctrl" }.into(),
             Key::Shift => if is_mac { "⇧" } else { "Shift" }.into(),

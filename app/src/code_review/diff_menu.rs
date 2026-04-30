@@ -5,6 +5,7 @@ use std::cmp;
 use fuzzy_match::{match_indices_case_insensitive, FuzzyMatchResult};
 use warp_core::ui::theme::Fill;
 use warp_editor::editor::NavigationKey;
+use warp_i18n::t;
 use warpui::{
     color::ColorU,
     elements::{
@@ -282,7 +283,7 @@ impl CodeReviewDiffMenu {
         let theme = appearance.theme();
         Container::new(
             Text::new(
-                "No matches",
+                t!("coding-no-matches"),
                 appearance.ui_font_family(),
                 appearance.ui_font_size(),
             )

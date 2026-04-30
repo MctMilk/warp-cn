@@ -1,3 +1,4 @@
+use warp_i18n::t;
 use warpui::{
     elements::{ChildView, Container, CrossAxisAlignment, Expanded, Flex, ParentElement, Text},
     fonts::{Properties, Style, Weight},
@@ -129,7 +130,7 @@ impl View for PendingUserQueryBlock {
         .finish();
 
         let queued_badge = Text::new(
-            "Queued",
+            t!("ai-ui-queued"),
             appearance.ui_font_family(),
             appearance.monospace_font_size().max(4.) - 2.,
         )

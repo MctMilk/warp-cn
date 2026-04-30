@@ -229,37 +229,40 @@ impl QueryFilter {
     }
 
     /// Returns placeholder text to be shown in an empty input when the filter is active.
-    pub fn placeholder_text(&self) -> &'static str {
-        match self {
-            QueryFilter::History => "Search history",
-            QueryFilter::Workflows => "Search workflows",
-            QueryFilter::AgentModeWorkflows => "Search prompts",
-            QueryFilter::Notebooks => "Search notebooks",
-            QueryFilter::Plans => "Search plans",
-            QueryFilter::NaturalLanguage => "e.g. replace string in file",
-            QueryFilter::Actions => "Search actions",
-            QueryFilter::Sessions => "Search sessions",
-            QueryFilter::Conversations => "Search conversations",
-            QueryFilter::HistoricalConversations => "Search historical conversations",
-            QueryFilter::LaunchConfigurations => "Search launch configurations",
-            QueryFilter::Drive => "Search objects in drive",
-            QueryFilter::EnvironmentVariables => "Search environment variables",
-            QueryFilter::PromptHistory => "Search prompt history",
-            QueryFilter::Files => "Search files",
-            QueryFilter::Commands => "Search commands",
-            QueryFilter::Blocks => "Search blocks",
-            QueryFilter::Code => "Search code symbols",
-            QueryFilter::Rules => "Search AI rules",
-            QueryFilter::Repos => "Search code repos",
-            QueryFilter::DiffSets => "Search diff sets",
-            QueryFilter::StaticSlashCommands => "Search static slash commands",
-            QueryFilter::Skills => "Search skills",
-            QueryFilter::BaseModels => "Search base models",
-            QueryFilter::FullTerminalUseModels => "Search full terminal use models",
-            QueryFilter::CurrentDirectoryConversations => {
-                "Search conversations in current directory"
+    pub fn placeholder_text(&self) -> String {
+        let key = match self {
+            QueryFilter::History => "search-filter-placeholder-history",
+            QueryFilter::Workflows => "search-filter-placeholder-workflows",
+            QueryFilter::AgentModeWorkflows => "search-filter-placeholder-prompts",
+            QueryFilter::Notebooks => "search-filter-placeholder-notebooks",
+            QueryFilter::Plans => "search-filter-placeholder-plans",
+            QueryFilter::NaturalLanguage => "search-filter-placeholder-natural-language",
+            QueryFilter::Actions => "search-filter-placeholder-actions",
+            QueryFilter::Sessions => "search-filter-placeholder-sessions",
+            QueryFilter::Conversations => "search-filter-placeholder-conversations",
+            QueryFilter::HistoricalConversations => {
+                "search-filter-placeholder-historical-conversations"
             }
-        }
+            QueryFilter::LaunchConfigurations => "search-filter-placeholder-launch-configurations",
+            QueryFilter::Drive => "search-filter-placeholder-drive",
+            QueryFilter::EnvironmentVariables => "search-filter-placeholder-environment-variables",
+            QueryFilter::PromptHistory => "search-filter-placeholder-prompt-history",
+            QueryFilter::Files => "search-filter-placeholder-files",
+            QueryFilter::Commands => "search-filter-placeholder-commands",
+            QueryFilter::Blocks => "search-filter-placeholder-blocks",
+            QueryFilter::Code => "search-filter-placeholder-code",
+            QueryFilter::Rules => "search-filter-placeholder-rules",
+            QueryFilter::Repos => "search-filter-placeholder-repos",
+            QueryFilter::DiffSets => "search-filter-placeholder-diff-sets",
+            QueryFilter::StaticSlashCommands => "search-filter-placeholder-static-slash-commands",
+            QueryFilter::Skills => "search-filter-placeholder-skills",
+            QueryFilter::BaseModels => "search-filter-placeholder-base-models",
+            QueryFilter::FullTerminalUseModels => "search-filter-placeholder-full-terminal-use-models",
+            QueryFilter::CurrentDirectoryConversations => {
+                "search-filter-placeholder-current-directory-conversations"
+            }
+        };
+        warp_i18n::tr!(key)
     }
 
     /// Returns text that is used to represent the filter as a filter 'atom' in the search input.

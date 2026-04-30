@@ -8,6 +8,7 @@ use crate::{
     appearance,
     banner::BannerState,
     drive::settings::WarpDriveSettings,
+    language_settings::LanguageSettings,
     report_if_error,
     resource_center::TipsCompleted,
     search::command_search::settings::CommandSearchSettings,
@@ -73,6 +74,7 @@ pub fn register_all_settings(ctx: &mut AppContext) {
     GPUSettings::register(ctx);
     ChangelogSettings::register(ctx);
     GeneralSettings::register(ctx);
+    LanguageSettings::register(ctx);
     AISettings::register_and_subscribe_to_events(ctx);
     CloudAgentSettings::register(ctx);
     ScrollSettings::register(ctx);

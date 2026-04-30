@@ -18,6 +18,9 @@ pub enum MenuItem {
 pub struct Menu {
     pub title: String,
     pub menu_items: Vec<MenuItem>,
+    /// Marks the system "Window" menu so AppKit can wire it via `setWindowsMenu:`.
+    /// Must be set explicitly because the title is locale-dependent.
+    is_window: bool,
 }
 
 impl Menu {
@@ -25,11 +28,20 @@ impl Menu {
         Menu {
             title: title.into(),
             menu_items,
+            is_window: false,
+        }
+    }
+
+    pub fn new_window<S: Into<String>>(title: S, menu_items: Vec<MenuItem>) -> Self {
+        Menu {
+            title: title.into(),
+            menu_items,
+            is_window: true,
         }
     }
 
     pub fn is_window_menu(&self) -> bool {
-        &self.title == "Window"
+        self.is_window
     }
 }
 
