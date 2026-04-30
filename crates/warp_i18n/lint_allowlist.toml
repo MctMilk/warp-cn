@@ -1,0 +1,49 @@
+# Phase 0 baseline (recorded 2026-04-29):
+#   warning_count = 197
+#   This is W₀ in design.md D22; subsequent Phases must drive this number down.
+#   To re-baseline locally: `cargo xtask check-i18n --mode warning 2>&1 | grep -c '^.*warning:'`.
+#
+# Phase 5 freeze (recorded 2026-04-29):
+#   warning_count = 0  (≤ W₀ × 0.10 = 19.7 ✓ — Phase 4 / Phase 5 gate cleared)
+#   allowlist entries = 4
+#
+# Schema reference: openspec/changes/localize-client-zh-cn/design.md D21.
+# Each entry MUST include reason >= 10 chars and an owner; matching is
+# order-invariant so insertion order does not affect lint output.
+
+schema_version = 1
+phase5_baseline_count = 4   # Frozen at Phase 5; CI compares against this.
+
+[[entries]]
+file_glob = "crates/keymap/src/**/*.rs"
+callsite = "Keystroke::parse"
+literal = "cmd-n"
+reason = "keystroke parser DSL token, not user-visible UI text"
+added_phase = 0
+owner = "i18n-team"
+
+# `inquire::Text::new` produces CLI-style terminal prompts (Agent SDK setup
+# wizard), not warpui UI labels. Per design.md D14, CLI flows stay English.
+[[entries]]
+file_glob = "app/src/ai/agent_sdk/**/*.rs"
+callsite = "inquire::Text::new"
+literal = "Enter custom Docker image name:"
+reason = "inquire CLI prompt in Agent SDK setup wizard, CLI-style flow"
+added_phase = 4
+owner = "i18n-team"
+
+[[entries]]
+file_glob = "app/src/ai/agent_sdk/**/*.rs"
+callsite = "inquire::Text::new"
+literal = "AWS Region:"
+reason = "inquire CLI prompt in Agent SDK setup wizard, CLI-style flow"
+added_phase = 4
+owner = "i18n-team"
+
+[[entries]]
+file_glob = "app/src/ai/agent_sdk/**/*.rs"
+callsite = "inquire::Text::new"
+literal = "AWS Access Key ID:"
+reason = "inquire CLI prompt in Agent SDK setup wizard, CLI-style flow"
+added_phase = 4
+owner = "i18n-team"

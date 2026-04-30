@@ -1,0 +1,63 @@
+name: i18n-lint
+
+on:
+  pull_request:
+    paths:
+      - "**/*.rs"
+      - "crates/warp_i18n/bundles/**"
+      - "xtask/**"
+      - "crates/warp_i18n/lint_allowlist.toml"
+      - ".github/workflows/i18n-lint.yml"
+  push:
+    branches: [master]
+    paths:
+      - "**/*.rs"
+      - "crates/warp_i18n/bundles/**"
+      - "xtask/**"
+      - "crates/warp_i18n/lint_allowlist.toml"
+      - ".github/workflows/i18n-lint.yml"
+
+jobs:
+  i18n-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        # Reads the channel from rust-toolchain.toml so this workflow does not
+        # drift when the workspace bumps Rust.
+        uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: ". -> target"
+          cache-on-failure: true
+
+      - name: Run i18n lint (hard mode)
+        run: cargo xtask check-i18n --mode hard
+
+      - name: Verify bundle parity (en ↔ zh-CN)
+        run: cargo xtask check-i18n --check-parity
+
+      - name: Detect allowlist growth (Phase 5 freeze)
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_LABELS: ${{ toJson(github.event.pull_request.labels.*.name) }}
+        run: |
+          set -euo pipefail
+          base_sha="${{ github.event.pull_request.base.sha }}"
+          allowlist="crates/warp_i18n/lint_allowlist.toml"
+          base_count=$(git show "$base_sha:$allowlist" 2>/dev/null \
+            | grep -c '^\[\[entries\]\]' || echo 0)
+          head_count=$(grep -c '^\[\[entries\]\]' "$allowlist" || echo 0)
+          if [ "$head_count" -gt "$base_count" ]; then
+            if echo "$PR_LABELS" | grep -q '"i18n-allowlist-grow"'; then
+              echo "Allowlist grew from $base_count → $head_count entries; \
+                'i18n-allowlist-grow' label present, allowing."
+            else
+              echo "::error::Allowlist grew from $base_count → $head_count entries. \
+                Add the 'i18n-allowlist-grow' label to acknowledge, or remove the new entries."
+              exit 1
+            fi
+          fi
