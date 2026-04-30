@@ -25,6 +25,7 @@ jobs:
       status: ${{ steps.merge.outputs.status }}
       sync_branch: ${{ steps.merge.outputs.sync_branch }}
       conflict_count: ${{ steps.merge.outputs.conflict_count }}
+      conflicts: ${{ steps.merge.outputs.conflicts }}
 
     steps:
       - name: Checkout master
@@ -94,29 +95,19 @@ jobs:
     if: needs.sync.outputs.status == 'conflict'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.sync.outputs.sync_branch }}
-
-      - name: Collect conflict file list
-        id: collect
-        run: |
-          set -euo pipefail
-          # WIP commit was created by sync-upstream; the files it touched are the conflicts.
-          {
-            echo 'files<<EOF'
-            git show --name-only --pretty=format: HEAD | sed '/^$/d' | sort -u
-            echo 'EOF'
-          } >> "$GITHUB_OUTPUT"
-
       - name: Open conflict issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
           BRANCH: ${{ needs.sync.outputs.sync_branch }}
           COUNT: ${{ needs.sync.outputs.conflict_count }}
-          FILES: ${{ steps.collect.outputs.files }}
+          FILES: ${{ needs.sync.outputs.conflicts }}
         run: |
+          # Ensure labels exist (idempotent; ignore errors).
+          gh label create upstream-sync --repo "$REPO" --color 0e8a16 --force 2>/dev/null || true
+          gh label create conflict --repo "$REPO" --color d93f0b --force 2>/dev/null || true
           gh issue create \
+            --repo "$REPO" \
             --title "Upstream sync conflict: ${COUNT} file(s) ($(date -u +%Y-%m-%d))" \
             --label "upstream-sync,conflict" \
             --body "$(cat <<EOF

@@ -30,6 +30,18 @@ emit() {
   fi
 }
 
+emit_multiline() {
+  # Multi-line output: needed when value contains newlines (e.g. file list).
+  local key="$1" value="$2" delim="__EOF_${RANDOM}_${RANDOM}__"
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
+    {
+      echo "${key}<<${delim}"
+      printf '%s\n' "$value"
+      echo "${delim}"
+    } >> "$GITHUB_OUTPUT"
+  fi
+}
+
 # Ensure upstream remote points at the canonical URL.
 if git remote get-url "$UPSTREAM_REMOTE" >/dev/null 2>&1; then
   git remote set-url "$UPSTREAM_REMOTE" "$UPSTREAM_URL"
@@ -66,9 +78,11 @@ COUNT="$(printf '%s\n' "$CONFLICTS" | grep -c . || true)"
 echo "::warning::merge conflicts in $COUNT file(s)"
 printf '%s\n' "$CONFLICTS"
 
+emit "status=conflict"
+emit "conflict_count=$COUNT"
+emit_multiline "conflicts" "$CONFLICTS"
+
 git add -u
 git commit --no-verify -m "WIP: unresolved upstream merge conflicts ($COUNT files)" || true
 
-emit "status=conflict"
-emit "conflict_count=$COUNT"
 exit 2
