@@ -22,6 +22,14 @@ on:
         options:
           - aarch64
           - x86_64
+      profile:
+        description: '编译 profile (debug=cargo dev profile, ~25-35 min；release=release-lto, 200+ min on free runner)'
+        required: true
+        default: debug
+        type: choice
+        options:
+          - debug
+          - release
 
 permissions:
   contents: read
@@ -32,7 +40,9 @@ jobs:
     # macos-14 = M1 (arm64) free runner. macos-13 = Intel.
     # 交叉编译 x86_64 时用 arm 主机一样可以；保持 macos-14。
     runs-on: macos-14
-    timeout-minutes: 90
+    # release-lto on free macos-14 (4-core M1) needs 200+ min cold; debug profile ~25-35 min.
+    # 240 min covers a cold release build with margin; warm cache cuts both substantially.
+    timeout-minutes: 240
 
     env:
       # 与 script/macos/bundle 中保持一致
@@ -58,8 +68,8 @@ jobs:
       - name: Setup Rust cache
         uses: Swatinem/rust-cache@v2
         with:
-          # 不同架构 / 档次分别缓存
-          key: mac-${{ inputs.arch }}-${{ inputs.channel }}
+          # 不同架构 / 档次 / profile 分别缓存（profile 影响 target 子目录与编译产物）
+          key: mac-${{ inputs.arch }}-${{ inputs.channel }}-${{ inputs.profile }}
           # 只在 master 上保存缓存，分支只读
           save-if: ${{ github.ref == 'refs/heads/master' }}
 
@@ -96,12 +106,19 @@ jobs:
         id: bundle
         # --selfsign 会用本地 Apple Development 证书自签；运行时找不到证书时回退到 ad-hoc 签名，
         # 比 --nosign 在 macOS 上启动体验更好（仍需用户右键 Open 一次绕过 Gatekeeper）。
+        # --debug 走 cargo dev profile，无 LTO，编译快很多但产物大。
         run: |
-          ./script/bundle \
-            --selfsign \
-            --channel ${{ inputs.channel }} \
-            --arch ${{ inputs.arch }} \
+          set -eu
+          BUNDLE_ARGS=(
+            --selfsign
+            --channel "${{ inputs.channel }}"
+            --arch "${{ inputs.arch }}"
             --dmg-name-suffix "${{ inputs.arch }}"
+          )
+          if [ "${{ inputs.profile }}" = "debug" ]; then
+            BUNDLE_ARGS+=(--debug)
+          fi
+          ./script/bundle "${BUNDLE_ARGS[@]}"
         shell: bash
 
       - name: Determine artifact paths
@@ -121,7 +138,7 @@ jobs:
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
-          name: warp-${{ inputs.channel }}-${{ inputs.arch }}-dmg
+          name: warp-${{ inputs.channel }}-${{ inputs.arch }}-${{ inputs.profile }}-dmg
           path: ${{ steps.paths.outputs.dmg_path }}
           if-no-files-found: error
           retention-days: 14
@@ -135,7 +152,7 @@ jobs:
       - name: Upload .app artifact
         uses: actions/upload-artifact@v4
         with:
-          name: warp-${{ inputs.channel }}-${{ inputs.arch }}-app
+          name: warp-${{ inputs.channel }}-${{ inputs.arch }}-${{ inputs.profile }}-app
           path: ${{ steps.paths.outputs.out_dir }}/app-bundle.zip
           if-no-files-found: error
           retention-days: 14
