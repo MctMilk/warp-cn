@@ -101,14 +101,19 @@ impl<'a> Visitor<'a> {
                 continue;
             }
             if let Some(reason) = detect_remote_string_flow(&arg) {
+                let callsite = format!("{macro_name}!");
+                let literal = reduce_to_str(&arg);
+                if self.allowlist.allows(&self.rel_path, &callsite, &literal) {
+                    continue;
+                }
                 let span = arg
                     .first()
                     .map(TokenTree::span)
                     .unwrap_or_else(Span::call_site);
                 self.record(
                     span,
-                    format!("{macro_name}!"),
-                    reduce_to_str(&arg),
+                    callsite,
+                    literal,
                     format!(
                         "RemoteString cannot be passed to t!/tr! ({reason}); render server text directly"
                     ),
