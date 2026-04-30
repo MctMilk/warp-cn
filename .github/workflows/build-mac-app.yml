@@ -1,0 +1,141 @@
+name: Build Mac App (unsigned)
+
+# 仅手动触发，避免每次 push 都消耗 CI 分钟。
+# 在仓库 Actions 页面点击 "Run workflow" 即可。
+on:
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: '发布档次 (oss=无 Sentry/外部依赖；dev=带调试断言；local=本地开发)'
+        required: true
+        default: oss
+        type: choice
+        options:
+          - oss
+          - dev
+          - local
+      arch:
+        description: '目标架构'
+        required: true
+        default: aarch64
+        type: choice
+        options:
+          - aarch64
+          - x86_64
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build ${{ inputs.channel }} (${{ inputs.arch }})
+    # macos-14 = M1 (arm64) free runner. macos-13 = Intel.
+    # 交叉编译 x86_64 时用 arm 主机一样可以；保持 macos-14。
+    runs-on: macos-14
+    timeout-minutes: 90
+
+    env:
+      # 与 script/macos/bundle 中保持一致
+      MACOSX_DEPLOYMENT_TARGET: "10.14"
+      # 让 install_channel_config 优雅退出（外部 fork 没有私有仓库 SSH 访问）
+      CARGO_TERM_COLOR: always
+      RUST_BACKTRACE: 1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show runner info
+        run: |
+          uname -m
+          sw_vers
+          xcodebuild -version
+          df -h /
+
+      - name: Add Rust target
+        run: rustup target add ${{ inputs.arch }}-apple-darwin
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          # 不同架构 / 档次分别缓存
+          key: mac-${{ inputs.arch }}-${{ inputs.channel }}
+          # 只在 master 上保存缓存，分支只读
+          save-if: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Install protoc
+        run: brew install protobuf
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.9.0'
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install cargo-bundle
+        # 使用 bootstrap 脚本中固定的 fork 修订版，与正式构建保持一致
+        run: |
+          cargo install cargo-bundle \
+            --git https://github.com/burtonageo/cargo-bundle \
+            --rev ae4c76e92c08774bf54ff077b1c52e3d1cd6c16d
+
+      - name: Install cargo-about (license generation)
+        run: cargo install --locked cargo-about@0.8.4
+
+      - name: Build & bundle
+        id: bundle
+        # --selfsign 会用本地 Apple Development 证书自签；运行时找不到证书时回退到 ad-hoc 签名，
+        # 比 --nosign 在 macOS 上启动体验更好（仍需用户右键 Open 一次绕过 Gatekeeper）。
+        run: |
+          ./script/bundle \
+            --selfsign \
+            --channel ${{ inputs.channel }} \
+            --arch ${{ inputs.arch }} \
+            --dmg-name-suffix "${{ inputs.arch }}"
+        shell: bash
+
+      - name: Determine artifact paths
+        id: paths
+        run: |
+          set -eu
+          DMG_PATH="${{ steps.bundle.outputs.dmg_path }}"
+          APP_DIR="$(dirname "$DMG_PATH")"
+          # 找到 .app 目录
+          APP_BUNDLE="$(ls -d "$APP_DIR"/*.app | head -1)"
+          echo "dmg_path=$DMG_PATH"          >> "$GITHUB_OUTPUT"
+          echo "app_bundle=$APP_BUNDLE"      >> "$GITHUB_OUTPUT"
+          echo "out_dir=$APP_DIR"            >> "$GITHUB_OUTPUT"
+          ls -la "$APP_DIR"
+        shell: bash
+
+      - name: Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: warp-${{ inputs.channel }}-${{ inputs.arch }}-dmg
+          path: ${{ steps.paths.outputs.dmg_path }}
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload .app bundle (zipped)
+        run: |
+          cd "${{ steps.paths.outputs.out_dir }}"
+          ditto -c -k --keepParent "$(basename "${{ steps.paths.outputs.app_bundle }}")" app-bundle.zip
+        shell: bash
+
+      - name: Upload .app artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: warp-${{ inputs.channel }}-${{ inputs.arch }}-app
+          path: ${{ steps.paths.outputs.out_dir }}/app-bundle.zip
+          if-no-files-found: error
+          retention-days: 14
