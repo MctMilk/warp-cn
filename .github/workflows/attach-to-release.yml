@@ -1,0 +1,79 @@
+name: Attach Run Artifacts to Release
+
+# Download artifacts from a previous workflow run and upload them as
+# permanent assets on a GitHub Release. Workflow artifacts expire in 14
+# days; release assets don't, so this is the right home for shippable
+# binaries. Runs on a GitHub runner so the upload bypasses any local
+# network constraints on the maintainer's box.
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: '源 workflow run ID（artifact 来源）'
+        required: true
+        type: string
+      release_tag:
+        description: '目标 Release tag（必须已存在）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  attach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Download artifacts from source run
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          mkdir -p artifacts
+          gh run download "${{ inputs.run_id }}" \
+            --repo "${{ github.repository }}" \
+            --dir artifacts
+          echo "::group::Downloaded layout"
+          find artifacts -maxdepth 3 -type f -exec ls -la {} \;
+          echo "::endgroup::"
+
+      - name: Stage assets with friendly names
+        id: stage
+        run: |
+          set -eu
+          mkdir -p staged
+          # Each artifact name becomes a directory under artifacts/.
+          # Prefix the inner files with the artifact name so release
+          # assets are self-describing (e.g. warp-oss-aarch64-debug-app/app-bundle.zip
+          # → warp-oss-aarch64-debug-app.zip).
+          for dir in artifacts/*/; do
+            artifact_name=$(basename "$dir")
+            for f in "$dir"*; do
+              [ -f "$f" ] || continue
+              ext="${f##*.}"
+              # If there's only one file in the artifact dir, name it after the artifact;
+              # otherwise prefix with artifact + original basename.
+              count=$(find "$dir" -maxdepth 1 -type f | wc -l | tr -d ' ')
+              if [ "$count" = "1" ]; then
+                cp "$f" "staged/${artifact_name}.${ext}"
+              else
+                cp "$f" "staged/${artifact_name}-$(basename "$f")"
+              fi
+            done
+          done
+          echo "::group::Staged assets"
+          ls -la staged/
+          echo "::endgroup::"
+
+      - name: Upload to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -eu
+          # --clobber lets re-runs replace existing assets cleanly.
+          gh release upload "${{ inputs.release_tag }}" staged/* \
+            --repo "${{ github.repository }}" \
+            --clobber
