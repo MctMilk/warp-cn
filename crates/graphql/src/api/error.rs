@@ -1,5 +1,5 @@
 use super::object::ObjectType;
-use crate::{response_context::ResponseContext, schema};
+use crate::{RemoteString, response_context::ResponseContext, schema};
 
 #[derive(cynic::QueryFragment, Debug)]
 pub struct UserFacingError {
@@ -23,7 +23,7 @@ pub enum UserFacingErrorInterface {
 #[derive(cynic::QueryFragment, Debug)]
 #[cynic(graphql_type = "UserFacingErrorInterface")]
 pub struct UserFacingErrorFallback {
-    pub message: String,
+    pub message: RemoteString,
 }
 
 #[derive(cynic::QueryFragment, Debug)]

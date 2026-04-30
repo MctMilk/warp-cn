@@ -88,7 +88,7 @@ use crate::terminal::prompt_render_helper::should_render_ps1_prompt;
 use crate::terminal::universal_developer_input::AtContextMenuDisabledReason;
 use crate::terminal::view::CodeDiffAction;
 use crate::terminal::CLIAgent;
-use crate::util::bindings::keybinding_name_to_normalized_string;
+use crate::util::bindings::{keybinding_name_to_normalized_string, BindingDescriptionFluentExt};
 #[cfg(feature = "local_fs")]
 use crate::util::file::external_editor;
 use crate::util::truncation::truncate_from_end;
@@ -261,6 +261,7 @@ use warp_completer::{
     signatures::CommandRegistry,
 };
 use warp_core::user_preferences::GetUserPreferences as _;
+use warp_i18n::t;
 use warp_core::{
     context_flag::ContextFlag,
     ui::theme::{color::internal_colors, AnsiColorIdentifier},
@@ -406,8 +407,15 @@ pub fn get_input_box_top_border_width() -> f32 {
 
 pub const COMPLETIONS_MENU_WIDTH: f32 = 330.;
 pub const OPEN_COMPLETIONS_KEYBINDING_NAME: &str = "input:open_completion_suggestions";
-pub const INPUT_A11Y_LABEL: &str = "Command Input.";
-pub const INPUT_A11Y_HELPER: &str = "Input your shell command, press enter to execute. Press cmd-up to navigate to output of previously executed commands. Press cmd-l to re-focus command input.";
+/// Localized "Command Input." a11y label. Kept as a fn so callers do not lock
+/// in a stale locale at static-init time. See sibling [`input_a11y_helper`].
+pub fn input_a11y_label() -> String {
+    warp_i18n::t!("a11y-input-label").to_string()
+}
+/// Localized helper text describing keyboard interactions for the input area.
+pub fn input_a11y_helper() -> String {
+    warp_i18n::t!("a11y-input-helper").to_string()
+}
 pub const AI_COMMAND_SEARCH_HINT_TEXT: &str = "Type '#' for AI command suggestions";
 
 const AGENT_MODE_AI_DISABLED_AUTODETECTION_DISABLED_HINT_TEXT: &str = "Run commands";
@@ -766,26 +774,40 @@ impl InputSuggestionsMode {
     }
 
     /// Returns the placeholder text for this mode, if it has a custom one.
-    pub fn placeholder_text(&self) -> Option<&'static str> {
+    pub fn placeholder_text(&self) -> Option<String> {
         match self {
             InputSuggestionsMode::UserQueryMenu {
                 action: UserQueryMenuAction::ForkFrom,
                 ..
-            } => Some("Search queries"),
+            } => Some(warp_i18n::t!("terminal-input-placeholder-search-queries")),
             InputSuggestionsMode::UserQueryMenu {
                 action: UserQueryMenuAction::Rewind,
                 ..
-            } => Some("Search queries to rewind to"),
-            InputSuggestionsMode::ConversationMenu => Some("Search conversations"),
-            InputSuggestionsMode::SkillMenu => Some("Search skills"),
-            InputSuggestionsMode::ModelSelector => Some("Search models"),
-            InputSuggestionsMode::ProfileSelector => Some("Search profiles"),
-            InputSuggestionsMode::SlashCommands if FeatureFlag::AgentView.is_enabled() => {
-                Some("Search commands")
+            } => Some(warp_i18n::t!("terminal-input-placeholder-search-queries-rewind")),
+            InputSuggestionsMode::ConversationMenu => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-conversations"))
             }
-            InputSuggestionsMode::PromptsMenu => Some("Search prompts"),
-            InputSuggestionsMode::IndexedReposMenu => Some("Search indexed repos"),
-            InputSuggestionsMode::PlanMenu { .. } => Some("Search plans"),
+            InputSuggestionsMode::SkillMenu => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-skills"))
+            }
+            InputSuggestionsMode::ModelSelector => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-models"))
+            }
+            InputSuggestionsMode::ProfileSelector => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-profiles"))
+            }
+            InputSuggestionsMode::SlashCommands if FeatureFlag::AgentView.is_enabled() => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-commands"))
+            }
+            InputSuggestionsMode::PromptsMenu => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-prompts"))
+            }
+            InputSuggestionsMode::IndexedReposMenu => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-indexed-repos"))
+            }
+            InputSuggestionsMode::PlanMenu { .. } => {
+                Some(warp_i18n::t!("terminal-input-placeholder-search-plans"))
+            }
             _ => None,
         }
     }
@@ -1748,7 +1770,7 @@ pub fn init(app: &mut AppContext) {
         FixedBinding::custom(
             CustomAction::History,
             InputAction::Up,
-            "Show History",
+            BindingDescription::fluent("binding-input-show-history"),
             // We need to ensure the workflow info box is not open as the "up" arrow
             // key is used to navigate the environment variables dropdown.
             // Same goes with the LLM menu.
@@ -1765,14 +1787,14 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "input:insert_network_logging_workflow",
-        "Show Warp network log",
+        BindingDescription::fluent("binding-input-show-network-log"),
         WorkspaceAction::OpenNetworkLogPane,
     )
     .with_enabled(|| ContextFlag::NetworkLogConsole.is_enabled())]);
 
     app.register_editable_bindings([EditableBinding::new(
         "input:clear_screen",
-        "Clear screen",
+        BindingDescription::fluent("binding-input-clear-screen"),
         InputAction::ClearScreen,
     )
     .with_context_predicate(id!("Input"))
@@ -1780,8 +1802,8 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "workspace:edit_prompt",
-        BindingDescription::new("Edit Prompt")
-            .with_custom_description(bindings::MAC_MENUS_CONTEXT, "Edit Prompt"),
+        BindingDescription::new(t!("command-edit-prompt"))
+            .with_custom_description(bindings::MAC_MENUS_CONTEXT, t!("command-edit-prompt")),
         WorkspaceAction::OpenPromptEditor {
             open_source: PromptEditorOpenSource::CommandPalette,
         },
@@ -1800,7 +1822,7 @@ pub fn init(app: &mut AppContext) {
     {
         app.register_editable_bindings([EditableBinding::new(
             "input:toggle_classic_completions_mode",
-            "(Experimental) Toggle classic completions mode",
+            BindingDescription::fluent("binding-input-toggle-classic-completions"),
             InputAction::ToggleClassicCompletionsMode,
         )
         .with_context_predicate(id!("Input"))]);
@@ -1810,7 +1832,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "workspace:show_command_search",
-            "Command Search",
+            BindingDescription::fluent("binding-input-command-search"),
             WorkspaceAction::ShowCommandSearch(Default::default()),
         )
         // Only show command search if none of the input-related panels are open, and if we aren't
@@ -1825,7 +1847,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::CommandSearch),
         EditableBinding::new(
             "input:search_command_history",
-            "History Search",
+            BindingDescription::fluent("binding-input-history-search"),
             WorkspaceAction::ShowCommandSearch(CommandSearchOptions {
                 filter: Some(QueryFilter::History),
                 init_content: Default::default(),
@@ -1835,7 +1857,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::HistorySearch),
         EditableBinding::new(
             OPEN_COMPLETIONS_KEYBINDING_NAME,
-            "Open completions menu",
+            BindingDescription::fluent("binding-input-open-completions"),
             InputAction::MaybeOpenCompletionSuggestions,
         )
         .with_context_predicate(id!("Input"))
@@ -1845,7 +1867,7 @@ pub fn init(app: &mut AppContext) {
     if let Some(custom_action) = workflows::CategoriesView::custom_action() {
         app.register_editable_bindings([EditableBinding::new(
             "input:toggle_workflows",
-            "Workflows",
+            BindingDescription::fluent("binding-input-toggle-workflows"),
             InputAction::SelectAndRefreshVoltron(VoltronItem::Workflows),
         )
         .with_context_predicate(id!("Input"))
@@ -1868,7 +1890,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "input:toggle_natural_language_command_search",
-            "Open AI Command Suggestions",
+            BindingDescription::fluent("binding-input-ai-command-suggestions"),
             InputAction::ShowAiCommandSearch,
         )
         .with_context_predicate(
@@ -1881,7 +1903,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::AISearch),
         EditableBinding::new(
             START_NEW_CONVERSATION_KEYBINDING_NAME,
-            "New agent conversation",
+            BindingDescription::fluent("binding-input-new-agent-conversation"),
             InputAction::StartNewAgentConversation,
         )
         .with_enabled(|| !FeatureFlag::AgentView.is_enabled())
@@ -1893,7 +1915,7 @@ pub fn init(app: &mut AppContext) {
         .with_linux_or_windows_key_binding("ctrl-alt-shift-N"),
         EditableBinding::new(
             "input:enable_auto_detection",
-            "Trigger Auto Detection",
+            BindingDescription::fluent("binding-input-trigger-auto-detection"),
             InputAction::EnableAutoDetection,
         )
         .with_enabled(|| FeatureFlag::AgentMode.is_enabled())
@@ -1907,7 +1929,7 @@ pub fn init(app: &mut AppContext) {
         .with_key_binding("alt-shift-I"),
         EditableBinding::new(
             "input:clear_and_reset_ai_context_menu_query",
-            "Clear and reset AI context menu query",
+            BindingDescription::fluent("binding-input-clear-ai-context-menu-query"),
             InputAction::ClearAndResetAIContextMenuQuery,
         )
         .with_context_predicate(id!("Input") & id!("AIContextMenuOpen") & !id!("IMEOpen"))
@@ -6680,7 +6702,7 @@ impl Input {
         }
         ctx.emit_a11y_content(AccessibilityContent::new(
             accessibility_text,
-            "Press shift-tab to select the next workflow argument",
+            warp_i18n::t!("a11y-input-workflow-arg-help").to_string(),
             WarpA11yRole::UserAction,
         ));
 
@@ -7032,7 +7054,8 @@ impl Input {
                 self.try_execute_command(&command, ctx);
 
                 ctx.emit_a11y_content(AccessibilityContent::new_without_help(
-                    format!("Executed: {command}"),
+                    warp_i18n::t!("a11y-input-executed-command", command = command.as_str())
+                        .to_string(),
                     WarpA11yRole::UserAction,
                 ));
             }
@@ -13883,9 +13906,9 @@ impl TypedActionView for Input {
         match action {
             InputAction::FocusInputBox => {
                 ActionAccessibilityContent::Custom(AccessibilityContent::new(
-                    INPUT_A11Y_LABEL,
+                    input_a11y_label(),
                     // TODO (a11y) use bindings from user settings
-                    INPUT_A11Y_HELPER,
+                    input_a11y_helper(),
                     WarpA11yRole::TextareaRole,
                 ))
             }
@@ -14082,9 +14105,9 @@ impl View for Input {
 
     fn accessibility_contents(&self, _: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new(
-            INPUT_A11Y_LABEL,
+            input_a11y_label(),
             // TODO (a11y) use bindings from user settings
-            INPUT_A11Y_HELPER,
+            input_a11y_helper(),
             WarpA11yRole::TextareaRole,
         ))
     }

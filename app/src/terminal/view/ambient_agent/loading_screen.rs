@@ -2,6 +2,7 @@
 
 use markdown_parser::{FormattedText, FormattedTextFragment, FormattedTextLine};
 use warp_core::ui::appearance::Appearance;
+use warp_i18n::t;
 use warp_core::ui::theme::AnsiColorIdentifier;
 use warp_core::ui::Icon;
 use warpui::elements::shimmering_text::ShimmeringTextStateHandle;
@@ -234,7 +235,7 @@ pub fn render_cloud_mode_error_screen(
 
     // Error title text
     let title_text = Text::new(
-        "Failed to start environment",
+        t!("ai-ui-ambient-failed-start-env"),
         appearance.ui_font_family(),
         appearance.monospace_font_size() + 2.,
     )
@@ -324,7 +325,7 @@ pub fn render_cloud_mode_github_auth_required_screen(
 
     // Title text - "GitHub Authentication Required"
     let title_text = Text::new(
-        "GitHub Authentication Required",
+        t!("ai-ui-ambient-github-auth-required"),
         appearance.ui_font_family(),
         appearance.monospace_font_size() + 2.,
     )
@@ -332,9 +333,9 @@ pub fn render_cloud_mode_github_auth_required_screen(
     .with_color(title_color)
     .finish();
 
-    // Message text - "Please authenticate with GitHub to continue"
+    // Message text
     let message_text = Text::new(
-        "Please authenticate with GitHub to continue",
+        t!("ai-ui-ambient-github-auth-msg"),
         appearance.ui_font_family(),
         appearance.monospace_font_size(),
     )
@@ -411,7 +412,7 @@ pub fn render_cloud_mode_cancelled_screen(appearance: &Appearance) -> Box<dyn El
 
     // Title text - "Cloud Agent Run Cancelled"
     let title_text = Text::new(
-        "Cloud Agent Run Cancelled",
+        t!("ai-ui-ambient-cancelled-title"),
         appearance.ui_font_family(),
         appearance.monospace_font_size() + 2.,
     )
@@ -419,9 +420,9 @@ pub fn render_cloud_mode_cancelled_screen(appearance: &Appearance) -> Box<dyn El
     .with_color(title_color)
     .finish();
 
-    // Subtitle text - "No cloud environment was started"
+    // Subtitle text
     let subtitle_text = Text::new(
-        "No cloud environment was started",
+        t!("ai-ui-ambient-no-cloud-env"),
         appearance.ui_font_family(),
         appearance.monospace_font_size(),
     )

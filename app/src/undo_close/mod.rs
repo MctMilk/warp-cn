@@ -1,9 +1,15 @@
 pub mod settings;
 mod stack;
 
-use warpui::{keymap::EditableBinding, AppContext};
+use warpui::{
+    keymap::{BindingDescription, EditableBinding},
+    AppContext,
+};
 
-use crate::{util::bindings::CustomAction, workspace::WorkspaceAction};
+use crate::{
+    util::bindings::{BindingDescriptionFluentExt, CustomAction},
+    workspace::WorkspaceAction,
+};
 
 pub use self::{settings::UndoCloseSettings, stack::UndoCloseStack, stack::UndoCloseStackEvent};
 
@@ -11,7 +17,7 @@ pub use self::{settings::UndoCloseSettings, stack::UndoCloseStack, stack::UndoCl
 pub fn init(ctx: &mut AppContext) {
     ctx.register_editable_bindings([EditableBinding::new(
         "app:reopen_closed_session",
-        "Reopen closed session",
+        BindingDescription::fluent("binding-undo-close-reopen"),
         // Trigger ReopenClosedSession on the active workspace when
         // the action is taken from the command palette.
         WorkspaceAction::ReopenClosedSession,

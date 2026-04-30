@@ -12,7 +12,8 @@ use serde::Serialize;
 use crate::themes::theme::Fill;
 use pathfinder_color::ColorU;
 use warpui::elements::{ChildAnchor, OffsetPositioning, Radius, SavePosition, Shrinkable};
-use warpui::keymap::EditableBinding;
+use crate::util::bindings::BindingDescriptionFluentExt;
+use warpui::keymap::{BindingDescription, EditableBinding};
 use warpui::ui_components::components::UiComponent;
 pub use warpui::{
     accessibility::{AccessibilityContent, WarpA11yRole},
@@ -130,7 +131,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "find:find_next_occurrence",
-            "Find the next occurrence of your search query",
+            BindingDescription::fluent("binding-find-next-occurrence"),
             FindAction::CmdG,
         )
         .with_context_predicate(id!("Find"))
@@ -140,7 +141,7 @@ pub fn init(app: &mut AppContext) {
         .with_linux_or_windows_key_binding("f3"),
         EditableBinding::new(
             "find:find_prev_occurrence",
-            "Find the previous occurrence of your search query",
+            BindingDescription::fluent("binding-find-prev-occurrence"),
             FindAction::CmdShiftG,
         )
         .with_context_predicate(id!("Find"))
@@ -252,16 +253,20 @@ impl<T: FindModel + Entity<Event = FindEvent> + 'static> Find<T> {
     pub fn emit_result_a11y_content(&mut self, ctx: &mut ViewContext<Self>) {
         let content = if let Some(match_index) = self.model.as_ref(ctx).focused_match_index() {
             AccessibilityContent::new(
-                format!(
-                    "Result {} of {}.",
-                    match_index + 1,
-                    self.model.as_ref(ctx).match_count()
-                ),
-                "Use enter and shift-enter to navigate between matches. Escape to quit.",
+                warp_i18n::t!(
+                    "a11y-code-find-result-of",
+                    index = match_index + 1,
+                    count = self.model.as_ref(ctx).match_count()
+                )
+                .to_string(),
+                warp_i18n::t!("a11y-code-find-result-help").to_string(),
                 WarpA11yRole::UserAction,
             )
         } else {
-            AccessibilityContent::new_without_help("No results.", WarpA11yRole::UserAction)
+            AccessibilityContent::new_without_help(
+                warp_i18n::t!("a11y-code-find-no-results").to_string(),
+                WarpA11yRole::UserAction,
+            )
         };
         ctx.emit_a11y_content(content);
     }
@@ -498,8 +503,8 @@ impl<T: FindModel + Entity<Event = FindEvent> + 'static> View for Find<T> {
 
     fn accessibility_contents(&self, _: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new(
-            "Type searched phrase.",
-            "Press escape to quit, use enter and shift-enter to navigate between matches",
+            warp_i18n::t!("a11y-find-bar-help-prompt").to_string(),
+            warp_i18n::t!("a11y-find-bar-help").to_string(),
             WarpA11yRole::TextareaRole,
         ))
     }

@@ -589,14 +589,20 @@ impl InputSuggestions {
         ) {
             (Some(text), Some(desc)) => {
                 ctx.emit_a11y_content(AccessibilityContent::new(
-                    format!("Suggestion: {text}.\n"),
+                    format!(
+                        "{}\n",
+                        warp_i18n::t!("a11y-input-suggestions-suggestion", text = text)
+                    ),
                     desc,
                     WarpA11yRole::MenuItemRole,
                 ));
             }
             (Some(text), None) => {
                 ctx.emit_a11y_content(AccessibilityContent::new_without_help(
-                    format!("Suggestion: {text}.\n"),
+                    format!(
+                        "{}\n",
+                        warp_i18n::t!("a11y-input-suggestions-suggestion", text = text)
+                    ),
                     WarpA11yRole::MenuItemRole,
                 ));
             }
@@ -620,7 +626,7 @@ impl InputSuggestions {
 
         if let Some(text) = self.get_selected_item_text() {
             ctx.emit_a11y_content(AccessibilityContent::new_without_help(
-                format!("Selected: {text}"),
+                warp_i18n::t!("a11y-input-suggestions-selected", text = text).to_string(),
                 WarpA11yRole::MenuItemRole,
             ));
         }
@@ -645,7 +651,7 @@ impl InputSuggestions {
         ctx: &mut ViewContext<Self>,
     ) {
         ctx.emit_a11y_content(AccessibilityContent::new_without_help(
-            "Closed suggestions.",
+            warp_i18n::t!("a11y-input-suggestions-closed").to_string(),
             WarpA11yRole::UserAction,
         ));
         ctx.emit(Event::CloseSuggestion {
@@ -1085,10 +1091,9 @@ impl View for InputSuggestions {
 
     fn accessibility_contents(&self, _: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new(
-            "Command suggestions.",
+            warp_i18n::t!("a11y-input-suggestions-menu-label").to_string(),
             // TODO use bindings from user settings
-            "Navigate with tab and shift-tab, and confirm with enter. Execute selected command \
-                with command + enter. Esc leaves the suggestions menu.",
+            warp_i18n::t!("a11y-input-suggestions-menu-help").to_string(),
             WarpA11yRole::MenuRole,
         ))
     }

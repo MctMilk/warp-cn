@@ -1,4 +1,5 @@
 use warp_core::ui::appearance::Appearance;
+use warp_i18n::t;
 use warpui::{
     elements::ParentElement,
     prelude::{Container, Empty, Flex, Text},
@@ -91,7 +92,7 @@ fn render_user_query(
     if ambient_agent_model.error_message().is_some() {
         column.add_child(
             Text::new(
-                "Failed",
+                t!("ai-ui-ambient-failed"),
                 appearance.ui_font_family(),
                 appearance.monospace_font_size(),
             )

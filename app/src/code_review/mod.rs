@@ -24,13 +24,13 @@ use code_review_view::CodeReviewAction;
 use std::path::{Path, PathBuf};
 use warpui::{
     id,
-    keymap::{EditableBinding, FixedBinding},
+    keymap::{BindingDescription, EditableBinding, FixedBinding},
     AppContext, Entity, EntityId, ModelContext, SingletonEntity, WeakViewHandle, WindowId,
 };
 
 use crate::code_review::telemetry_event::CodeReviewPaneEntrypoint;
 use crate::terminal::{view::TerminalView, CLIAgent};
-use crate::util::bindings::CustomAction;
+use crate::util::bindings::{BindingDescriptionFluentExt, CustomAction};
 
 /// Arguments needed to open or toggle the code review panel.
 /// Bundled into a struct so that events can atomically open the
@@ -56,14 +56,14 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "code_review:save_all_unsaved_files",
-            "Save all unsaved files in code review",
+            BindingDescription::fluent("binding-code-review-save-all"),
             CodeReviewAction::SaveAllUnsavedFiles,
         )
         .with_context_predicate(id!("CodeReviewView"))
         .with_key_binding("cmdorctrl-s"),
         EditableBinding::new(
             "code_review:show_find_bar",
-            "Show find bar in code review",
+            BindingDescription::fluent("binding-code-review-show-find-bar"),
             CodeReviewAction::ShowFindBar,
         )
         .with_context_predicate(id!("CodeReviewView"))
@@ -74,7 +74,7 @@ pub fn init(app: &mut AppContext) {
     app.register_fixed_bindings([FixedBinding::custom(
         CustomAction::Undo,
         CodeReviewAction::UndoRevert,
-        "Undo",
+        BindingDescription::fluent("binding-code-review-undo-revert"),
         id!("CodeReviewView") & !id!("IMEOpen"),
     )]);
 

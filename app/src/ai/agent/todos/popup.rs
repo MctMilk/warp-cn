@@ -23,6 +23,7 @@ use crate::ai::agent::icons::{in_progress_icon, pending_icon, succeeded_icon};
 use crate::ai::agent::todos::AIAgentTodoList;
 use crate::ai::blocklist::{BlocklistAIHistoryEvent, BlocklistAIHistoryModel};
 use crate::ui_components::blended_colors;
+use warp_i18n::t;
 
 pub struct AgentTodosPopupView {
     terminal_view_id: EntityId,
@@ -136,7 +137,7 @@ impl AgentTodosPopupView {
 
         let mut header_row = Flex::row().with_cross_axis_alignment(CrossAxisAlignment::Center);
         let mut header = Text::new(
-            "Tasks".to_string(),
+            t!("ai-ui-tasks-header"),
             appearance.header_font_family(),
             styles.detail_font_size + 2.,
         )

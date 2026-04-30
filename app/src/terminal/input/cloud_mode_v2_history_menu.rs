@@ -4,6 +4,7 @@ use pathfinder_color::ColorU;
 use warp_core::ui::appearance::Appearance;
 use warp_core::ui::theme::color::internal_colors;
 use warp_core::ui::theme::Fill;
+use warp_i18n::t;
 use warpui::elements::{
     Align, Border, ConstrainedBox, Container, CornerRadius, DropShadow, Radius, Text,
 };
@@ -134,7 +135,7 @@ impl View for CloudModeV2HistoryMenuView {
 
         let content: Box<dyn Element> = if row_count == 0 {
             let no_results_text = Text::new(
-                "No results".to_string(),
+                t!("terminal-no-results"),
                 appearance.ui_font_family(),
                 inline_menu_styles::font_size(appearance),
             )

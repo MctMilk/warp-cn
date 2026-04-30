@@ -57,6 +57,7 @@ use crate::{
 };
 use toolbar_item::AgentToolbarItemKind;
 use warp_cli::agent::Harness;
+use warp_i18n::t;
 
 use std::sync::Arc;
 
@@ -2062,7 +2063,7 @@ fn render_ftu_callout(
                     Expanded::new(
                         1.,
                         Text::new(
-                            "Now using Full Terminal Agent's default model.",
+                            t!("ai-ui-using-default-model"),
                             appearance.ui_font_family(),
                             appearance.monospace_font_size() - 2.,
                         )

@@ -105,14 +105,14 @@ pub trait AppExt {
     /// without an application bundle.
     fn set_dev_icon(&mut self, value: Cow<'static, [u8]>);
 
-    /// Sets the main menu bar constructor function.
-    fn set_menu_bar_builder(&mut self, value: impl FnOnce(&mut AppContext) -> MenuBar + 'static);
+    /// Sets the main menu bar constructor function. Called during startup and again on locale change.
+    fn set_menu_bar_builder(&mut self, value: impl Fn(&mut AppContext) -> MenuBar + 'static);
 
     /// Sets the macOS dock menu constructor function.
     fn set_dock_menu_builder(&mut self, value: impl FnOnce(&mut AppContext) -> Menu + 'static);
 }
 
-type MenuBarBuilderFn = Box<dyn FnOnce(&mut AppContext) -> MenuBar>;
+type MenuBarBuilderFn = Box<dyn Fn(&mut AppContext) -> MenuBar>;
 type DockMenuBuilderFn = Box<dyn FnOnce(&mut AppContext) -> Menu>;
 
 /// The actual application, from the perspective of the platform and the
@@ -230,7 +230,7 @@ impl AppExt for AppBuilder {
         }
     }
 
-    fn set_menu_bar_builder(&mut self, value: impl FnOnce(&mut AppContext) -> MenuBar + 'static) {
+    fn set_menu_bar_builder(&mut self, value: impl Fn(&mut AppContext) -> MenuBar + 'static) {
         match self.as_inner_mut() {
             AppBackend::CurrentPlatform(app) => app.menu_bar_builder = Some(Box::new(value)),
             AppBackend::Headless(_) => (),
@@ -243,6 +243,27 @@ impl AppExt for AppBuilder {
             AppBackend::Headless(_) => (),
         }
     }
+}
+
+impl App {
+    /// Rebuild the main menu bar from the stored builder and set it on NSApplication.
+    /// Called when the locale changes so all menu labels reflect the new language.
+    pub fn rebuild_main_menu(&mut self) {
+        if let Some(ref builder) = self.menu_bar_builder {
+            let menu_bar = self.callbacks.with_mutable_app_context(|ctx| builder(ctx));
+            unsafe {
+                let nsmenu = make_main_menu(menu_bar);
+                let () = msg_send![NSApp(), setMainMenu: nsmenu];
+            }
+        }
+    }
+}
+
+/// Rebuild the main menu from outside the platform crate. The stored menu_bar_builder
+/// is re-invoked so `t!()` calls inside menu constructors pick up the new locale.
+pub fn rebuild_main_menu() {
+    let app = unsafe { get_app(&mut *get_warp_app()) };
+    app.rebuild_main_menu();
 }
 
 unsafe fn get_app(object: &mut Object) -> &mut App {
@@ -305,7 +326,7 @@ pub unsafe extern "C-unwind" fn warp_app_will_finish_launching(this: &mut Object
         let _: () = msg_send![app_delegate, setReachabilityListener];
     }
 
-    if let Some(menu_bar_builder) = app.menu_bar_builder.take() {
+    if let Some(ref menu_bar_builder) = app.menu_bar_builder {
         let menu_bar = app.callbacks.with_mutable_app_context(menu_bar_builder);
         let nsmenu = make_main_menu(menu_bar);
         let () = msg_send![NSApp(), setMainMenu: nsmenu];

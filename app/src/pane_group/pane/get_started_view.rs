@@ -5,7 +5,7 @@ use warpui::{
         Align, ChildView, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Icon,
         MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement as _, Radius,
     },
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     platform::Cursor,
     ui_components::{
         button::{ButtonVariant, TextAndIcon, TextAndIconAlignment},
@@ -26,7 +26,9 @@ use crate::{
     },
     send_telemetry_from_ctx,
     terminal::TerminalView,
-    util::bindings::{keybinding_name_to_display_string, BindingGroup, CustomAction},
+    util::bindings::{
+        keybinding_name_to_display_string, BindingDescriptionFluentExt, BindingGroup, CustomAction,
+    },
     view_components::DismissibleToast,
     workspace::ToastStack,
     workspace::{Workspace, WorkspaceAction},
@@ -38,7 +40,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "workspace:new_tab",
-        "Terminal session",
+        BindingDescription::fluent("binding-get-started-terminal-session"),
         GetStartedAction::TerminalSession,
     )
     .with_context_predicate(id!("GetStartedView"))

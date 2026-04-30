@@ -67,6 +67,7 @@ use crate::{
 use warp_core::features::FeatureFlag;
 use warp_core::ui::theme::{color::internal_colors, Fill};
 use warp_core::HostId;
+use warp_i18n::t;
 use warpui::ui_components::components::UiComponent;
 
 mod editing;
@@ -2696,7 +2697,7 @@ impl FileTreeView {
             )
             .with_child(
                 Text::new(
-                    "Project explorer unavailable",
+                    t!("coding-project-explorer-unavailable"),
                     appearance.ui_font_family(),
                     appearance.ui_font_size() + 2.,
                 )

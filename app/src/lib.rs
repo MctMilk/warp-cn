@@ -43,6 +43,7 @@ mod global_resource_handles;
 mod gpu_state;
 mod input_classifier;
 mod interval_timer;
+mod language_settings;
 mod linear;
 #[cfg(any(target_os = "macos", target_os = "windows"))]
 mod login_item;
@@ -501,6 +502,10 @@ fn apply_scroll_multiplier(event: &mut Event, app: &AppContext) {
 pub fn run() -> Result<()> {
     // Perform any necessary platform-specific initialization.
     platform::init();
+
+    if let Err(err) = warp_i18n::init(warp_i18n::Locale::DEFAULT) {
+        ::tracing::error!(?err, "warp_i18n::init failed; UI strings will render placeholders");
+    }
 
     // Ensure feature flags are initialized before parsing command-line arguments.
     init_feature_flags();
@@ -1002,6 +1007,8 @@ fn initialize_app(
 
     let user_defaults_on_startup = settings::init(startup_toml_parse_error, ctx);
     timer.mark_interval_end("READ_USER_DEFAULTS_AND_INITIALIZE_SETTINGS");
+
+    crate::language_settings::bind_to_warp_i18n(ctx);
 
     if FeatureFlag::UIZoom.is_enabled() {
         ctx.set_zoom_factor(WindowSettings::as_ref(ctx).zoom_level.as_zoom_factor());

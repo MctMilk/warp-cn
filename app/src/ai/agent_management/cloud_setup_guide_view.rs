@@ -28,6 +28,7 @@ use warpui::text_layout::TextStyle;
 use warpui::ui_components::components::{UiComponent, UiComponentStyles};
 use warpui::ViewHandle;
 use warpui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext};
+use warp_i18n::t;
 
 const DOCS_URL: &str = "https://docs.warp.dev/agent-platform/cloud-agents/overview";
 const ENV_DOCS_URL: &str =
@@ -144,7 +145,7 @@ impl CloudSetupGuideView {
         let mut header_container = Flex::column().with_spacing(8.);
 
         let title = Text::new(
-            "Getting started with Oz cloud agents",
+            t!("ai-ui-cloud-setup-title"),
             appearance.ui_font_family(),
             title_font_size,
         )
@@ -154,7 +155,7 @@ impl CloudSetupGuideView {
         header_container.add_child(title);
 
         let subtitle = Text::new(
-            "Start Oz cloud agents directly in Warp from an integration (Linear, Slack), with an event (GitHub, built-in schedule), or programmatically with the Oz SDK or CLI.",
+            t!("ai-ui-cloud-setup-intro"),
             appearance.ui_font_family(),
             subtitle_font_size,
         )
@@ -247,7 +248,7 @@ impl CloudSetupGuideView {
         let font_size = 16.;
 
         Text::new(
-            "Manual setup: Create a Slack or Linear integration with the Oz CLI",
+            t!("ai-ui-cloud-setup-manual-section"),
             appearance.ui_font_family(),
             font_size,
         )
@@ -429,7 +430,7 @@ impl CloudSetupGuideView {
             .with_child(Self::render_step_number(1, appearance))
             .with_child(
                 Text::new(
-                    "Create an environment",
+                    t!("ai-ui-cloud-setup-create-env"),
                     appearance.ui_font_family(),
                     step_title_font_size,
                 )
@@ -441,7 +442,7 @@ impl CloudSetupGuideView {
 
         let description = Container::new(
             Text::new(
-                "First, set up an environment to create an integration.",
+                t!("ai-ui-cloud-setup-env-first"),
                 appearance.ui_font_family(),
                 step_desc_font_size,
             )
@@ -472,7 +473,7 @@ impl CloudSetupGuideView {
 
         let or_text = Container::new(
             Text::new(
-                "Or, supply your own existing docker image.",
+                t!("ai-ui-cloud-setup-custom-image"),
                 appearance.ui_font_family(),
                 step_desc_font_size,
             )
@@ -514,7 +515,7 @@ impl CloudSetupGuideView {
             .with_child(Self::render_step_number(2, appearance))
             .with_child(
                 Text::new(
-                    "Create an integration",
+                    t!("ai-ui-cloud-setup-create-integration"),
                     appearance.ui_font_family(),
                     step_title_font_size,
                 )

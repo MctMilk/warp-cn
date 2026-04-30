@@ -25,14 +25,14 @@ use warpui::{
 };
 
 const SUBSCRIBE_ITEMS: &[&str] = &[
-    "1,500 credits per month",
-    "Access to frontier OpenAI, Anthropic, and Google models",
-    "Access to Reload credits and volume-based discounts",
-    "Extended cloud agents access",
-    "Highest codebase indexing limits",
-    "Unlimited Warp Drive objects and collaboration",
-    "Private email support",
-    "Unlimited cloud conversation storage",
+    "onboarding-subscribe-item-credits",
+    "onboarding-subscribe-item-frontier-models",
+    "onboarding-subscribe-item-reload-credits",
+    "onboarding-subscribe-item-cloud-agents",
+    "onboarding-subscribe-item-codebase-indexing",
+    "onboarding-subscribe-item-warp-drive",
+    "onboarding-subscribe-item-private-support",
+    "onboarding-subscribe-item-cloud-storage",
 ];
 
 #[derive(Debug, Clone)]
@@ -101,7 +101,7 @@ impl FreeUserNoAiSlide {
     fn render_header(&self, appearance: &Appearance) -> Box<dyn Element> {
         appearance
             .ui_builder()
-            .paragraph("Let's get started.")
+            .paragraph(warp_i18n::t!("onboarding-free-no-ai-header"))
             .with_style(UiComponentStyles {
                 font_size: Some(36.),
                 font_weight: Some(Weight::Medium),
@@ -121,8 +121,8 @@ impl FreeUserNoAiSlide {
             appearance,
             0,
             Icon::Code2,
-            "Agent driven development with Warp's built-in agent",
-            "Iterate, plan, and build with Oz: Warp's built-in agent. Available locally or in the cloud.",
+            warp_i18n::t!("onboarding-free-no-ai-agent-title"),
+            warp_i18n::t!("onboarding-free-no-ai-agent-desc"),
             agent_price_badge.to_string(),
             true, // badge is green
             self.agent_mouse_state.clone(),
@@ -133,9 +133,9 @@ impl FreeUserNoAiSlide {
             appearance,
             1,
             Icon::Terminal,
-            "Classic terminal with third-party agents",
-            "A modern terminal that supports third-party agents (Claude Code, Codex, Gemini CLI) and classic terminal workflows.",
-            "Free".to_string(),
+            warp_i18n::t!("onboarding-free-no-ai-terminal-title"),
+            warp_i18n::t!("onboarding-free-no-ai-terminal-desc"),
+            warp_i18n::t!("onboarding-free-no-ai-badge-free"),
             false, // badge is gray
             self.classic_terminal_mouse_state.clone(),
             selected_index,
@@ -190,8 +190,8 @@ impl FreeUserNoAiSlide {
         appearance: &Appearance,
         index: usize,
         icon: Icon,
-        label: &'static str,
-        description: &'static str,
+        label: String,
+        description: String,
         badge_text: String,
         badge_green: bool,
         mouse_state: MouseStateHandle,
@@ -300,7 +300,7 @@ impl FreeUserNoAiSlide {
         let back_button = self.back_button.render(
             appearance,
             button::Params {
-                content: button::Content::Label("Back".into()),
+                content: button::Content::Label(warp_i18n::t!("onboarding-nav-back").into()),
                 theme: &button::themes::Naked,
                 options: button::Options {
                     on_click: Some(Box::new(|ctx, _app, _pos| {
@@ -316,7 +316,7 @@ impl FreeUserNoAiSlide {
             self.next_button.render(
                 appearance,
                 button::Params {
-                    content: button::Content::Label("Get Warping".into()),
+                    content: button::Content::Label(warp_i18n::t!("onboarding-nav-get-warping").into()),
                     theme: &button::themes::Primary,
                     options: button::Options {
                         keystroke: Some(enter),
@@ -331,7 +331,7 @@ impl FreeUserNoAiSlide {
             self.subscribe_nav_button.render(
                 appearance,
                 button::Params {
-                    content: button::Content::Label("Subscribe".into()),
+                    content: button::Content::Label(warp_i18n::t!("onboarding-free-no-ai-subscribe-button").into()),
                     theme: &button::themes::Primary,
                     options: button::Options {
                         on_click: Some(Box::new(|ctx, _app, _pos| {
@@ -345,7 +345,7 @@ impl FreeUserNoAiSlide {
             self.next_button.render(
                 appearance,
                 button::Params {
-                    content: button::Content::Label("Next".into()),
+                    content: button::Content::Label(warp_i18n::t!("onboarding-nav-next").into()),
                     theme: &button::themes::Primary,
                     options: button::Options {
                         disabled: true,
@@ -368,7 +368,7 @@ impl FreeUserNoAiSlide {
         let text_sub = internal_colors::text_sub(theme, internal_colors::neutral_2(theme));
 
         let title = FormattedTextElement::from_str(
-            "Subscribe to access agent driven development in Warp.",
+            warp_i18n::t!("onboarding-free-no-ai-subscribe-title"),
             ui_font_family,
             24.,
         )
@@ -383,7 +383,8 @@ impl FreeUserNoAiSlide {
             .with_cross_axis_alignment(CrossAxisAlignment::Start)
             .with_spacing(8.);
 
-        for item_text in SUBSCRIBE_ITEMS {
+        for item_key in SUBSCRIBE_ITEMS {
+            let item_text = warp_i18n::tr!(item_key);
             let bullet = appearance
                 .ui_builder()
                 .paragraph(format!("\u{2022} {item_text}"))
@@ -416,7 +417,7 @@ impl FreeUserNoAiSlide {
                     .with_cross_axis_alignment(CrossAxisAlignment::Center)
                     .with_child(
                         warpui::elements::Text::new_inline(
-                            "Subscribe",
+                            warp_i18n::t!("onboarding-free-no-ai-subscribe-button"),
                             appearance.ui_font_family(),
                             14.,
                         )

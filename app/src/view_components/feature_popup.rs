@@ -1,3 +1,4 @@
+use warp_i18n::t;
 use warpui::{
     elements::{
         ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
@@ -57,7 +58,7 @@ impl FeaturePopup {
         match self.badge {
             FeaturePopupBadge::New => Container::new(
                 Text::new(
-                    "NEW",
+                    t!("onboarding-feature-popup-new"),
                     appearance.ui_font_family(),
                     appearance.ui_font_size(),
                 )

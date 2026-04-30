@@ -303,9 +303,12 @@ impl TextLayoutSystem {
         Self {
             families: Default::default(),
             font_store: RwLock::new(cosmic_text::FontSystem::new_with_locale_and_db(
-                // Locale is needed for font fallback. For now, we hardcode this to "en" to match
-                // our mac implementation https://github.com/warpdotdev/warp-internal/blob/bf33d651a9fcece70df8eac35f89b0393ca5189a/ui/src/platform/mac/fonts.rs#L383.
-                "en".into(),
+                // Match the active i18n locale at construction so cosmic_text biases CJK script
+                // fallback correctly for zh-CN users. Runtime locale switches re-create no caches;
+                // a full FontSystem rebuild on set_locale is intentionally out of scope.
+                warp_i18n::try_global()
+                    .map(|i18n| i18n.current().as_bcp47().to_string())
+                    .unwrap_or_else(|| "en".to_string()),
                 Default::default(),
             )),
             font_id_map: Default::default(),

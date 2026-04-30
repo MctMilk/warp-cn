@@ -1,3 +1,4 @@
+use warp_i18n::t;
 use warpui::{
     AppContext, Element, SizeConstraint,
     elements::{Align, CacheOption, CornerRadius, Image, Radius, Text},
@@ -44,7 +45,7 @@ impl RenderableBlock for RenderableMermaidDiagram {
         let code_text = model.styles().code_text;
         let placeholder = Align::new(
             Text::new(
-                "Rendering Mermaid diagram…",
+                t!("misc-mermaid-rendering"),
                 code_text.font_family,
                 code_text.font_size,
             )

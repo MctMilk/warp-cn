@@ -23,7 +23,7 @@ use warpui::{
         EventHandler, Flex, MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement,
         SavePosition, Shrinkable, Stack,
     },
-    keymap::{EditableBinding, FixedBinding},
+    keymap::{BindingDescription, EditableBinding, FixedBinding},
     presenter::ChildView,
     r#async::{SpawnedFutureHandle, Timer},
     ui_components::{
@@ -87,7 +87,7 @@ use crate::{
     terminal::safe_mode_settings::get_secret_obfuscation_mode,
     throttle::throttle,
     ui_components::icons::{self, Icon},
-    util::bindings::{self, CustomAction},
+    util::bindings::{self, BindingDescriptionFluentExt, CustomAction},
     view_components::{DismissibleToast, ToastType},
     workflows::{WorkflowSource, WorkflowType},
     workspace::ToastStack,
@@ -161,7 +161,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "notebookview:increase_font_size",
-            "Increase notebook font size",
+            BindingDescription::fluent("binding-notebooks-increase-font-size"),
             NotebookAction::IncreaseFontSize,
         )
         .with_context_predicate(id!("NotebookView") & id!("NotMatchNotebookToMonospaceSize"))
@@ -169,7 +169,7 @@ pub fn init(app: &mut AppContext) {
         .with_key_binding("cmdorctrl-="),
         EditableBinding::new(
             "notebookview:decrease_font_size",
-            "Decrease notebook font size",
+            BindingDescription::fluent("binding-notebooks-decrease-font-size"),
             NotebookAction::DecreaseFontSize,
         )
         .with_context_predicate(id!("NotebookView") & id!("NotMatchNotebookToMonospaceSize"))
@@ -177,7 +177,7 @@ pub fn init(app: &mut AppContext) {
         .with_key_binding("cmdorctrl--"),
         EditableBinding::new(
             "notebookview:reset_font_size",
-            "Reset notebook font size",
+            BindingDescription::fluent("binding-notebooks-reset-font-size"),
             NotebookAction::ResetFontSize,
         )
         .with_context_predicate(id!("NotebookView") & id!("NotMatchNotebookToMonospaceSize"))
@@ -185,7 +185,7 @@ pub fn init(app: &mut AppContext) {
         .with_custom_action(CustomAction::ResetFontSize),
         EditableBinding::new(
             "notebookview:focus_terminal_input",
-            "Focus Terminal Input from Notebook",
+            BindingDescription::fluent("binding-notebooks-focus-terminal-input"),
             NotebookAction::FocusTerminalInput,
         )
         .with_context_predicate(id!("NotebookView"))
@@ -200,14 +200,14 @@ pub fn init(app: &mut AppContext) {
         FixedBinding::custom(
             CustomAction::IncreaseFontSize,
             NotebookAction::IncreaseFontSize,
-            "Increase font size",
+            BindingDescription::fluent("binding-notebooks-fixed-increase-font-size"),
             id!("NotebookView") & id!("NotMatchNotebookToMonospaceSize"),
         )
         .with_group(bindings::BindingGroup::Settings.as_str()),
         FixedBinding::custom(
             CustomAction::DecreaseFontSize,
             NotebookAction::DecreaseFontSize,
-            "Decrease font size",
+            BindingDescription::fluent("binding-notebooks-fixed-decrease-font-size"),
             id!("NotebookView") & id!("NotMatchNotebookToMonospaceSize"),
         )
         .with_group(bindings::BindingGroup::Settings.as_str()),
@@ -2184,7 +2184,7 @@ impl View for NotebookView {
 
     fn accessibility_contents(&self, ctx: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new_without_help(
-            format!("{} notebook", self.title(ctx)),
+            warp_i18n::t!("a11y-notebook-suffix", title = self.title(ctx)).to_string(),
             WarpA11yRole::TextRole,
         ))
     }

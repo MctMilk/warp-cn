@@ -8,7 +8,7 @@ use warp_core::ui::appearance::Appearance;
 use warpui::elements::{
     Align, ChildView, ConstrainedBox, Container, CrossAxisAlignment, Flex, Icon, ParentElement,
 };
-use warpui::keymap::EditableBinding;
+use warpui::keymap::{BindingDescription, EditableBinding};
 use warpui::platform::FilePickerConfiguration;
 use warpui::ViewHandle;
 use warpui::{
@@ -25,7 +25,9 @@ use crate::pane_group::{
 use crate::projects::ProjectManagementModel;
 use crate::search::binding_source::BindingSource;
 use crate::search::welcome_palette::{Event as WelcomePaletteEvent, WelcomePalette};
-use crate::util::bindings::{keybinding_name_to_display_string, BindingGroup, CustomAction};
+use crate::util::bindings::{
+    keybinding_name_to_display_string, BindingDescriptionFluentExt, BindingGroup, CustomAction,
+};
 use crate::view_components::DismissibleToast;
 use crate::workspace::{ToastStack, Workspace};
 
@@ -35,7 +37,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "workspace:new_tab",
-            "Terminal session",
+            BindingDescription::fluent("binding-welcome-view-terminal-session"),
             WelcomeViewAction::CreateTerminalSession,
         )
         .with_context_predicate(id!("WelcomeView"))
@@ -44,7 +46,7 @@ pub fn init(app: &mut AppContext) {
         .with_enabled(|| ContextFlag::CreateNewSession.is_enabled()),
         EditableBinding::new(
             "welcome_view:open_project",
-            "Add repository",
+            BindingDescription::fluent("binding-welcome-view-add-repository"),
             WelcomeViewAction::OpenProject,
         )
         .with_context_predicate(id!("WelcomeView"))

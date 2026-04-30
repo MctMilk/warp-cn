@@ -52,7 +52,7 @@ use crate::terminal::view::{cell_size_and_padding, TerminalAction};
 use crate::themes::onboarding_theme_picker_themes;
 use crate::themes::theme::{AnsiColorIdentifier, Blend, Fill, ThemeKind, WarpThemeConfig};
 use crate::uri::OpenMCPSettingsArgs;
-use crate::util::bindings::{self, is_binding_pty_compliant};
+use crate::util::bindings::{self, is_binding_pty_compliant, BindingDescriptionFluentExt};
 use crate::util::traffic_lights::{traffic_light_data, TrafficLightData, TrafficLightMouseStates};
 use crate::view_components::DismissibleToast;
 use crate::window_settings::WindowSettings;
@@ -96,7 +96,7 @@ use url::Url;
 use warp_core::context_flag::ContextFlag;
 use warp_core::user_preferences::GetUserPreferences as _;
 use warpui::clipboard::ClipboardContent;
-use warpui::keymap::{EditableBinding, FixedBinding};
+use warpui::keymap::{BindingDescription, EditableBinding, FixedBinding};
 use warpui::windowing::WindowManager;
 
 use crate::ai::llms::{LLMPreferences, LLMPreferencesEvent};
@@ -485,7 +485,7 @@ pub fn init(app: &mut AppContext) {
         // Register a binding to toggle fullscreen on Linux and Windows.
         EditableBinding::new(
             "root_view:toggle_fullscreen",
-            "Toggle fullscreen",
+            BindingDescription::fluent("binding-root-view-toggle-fullscreen"),
             RootViewAction::ToggleFullscreen,
         )
         .with_group(bindings::BindingGroup::Navigation.as_str())
@@ -494,7 +494,7 @@ pub fn init(app: &mut AppContext) {
         // Debug binding for onboarding state
         EditableBinding::new(
             "root_view:enter_onboarding_state",
-            "[Debug] Enter Onboarding State",
+            BindingDescription::fluent("binding-root-view-debug-enter-onboarding"),
             RootViewAction::DebugEnterOnboardingState,
         )
         .with_group(bindings::BindingGroup::Settings.as_str())

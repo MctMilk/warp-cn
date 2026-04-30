@@ -1,5 +1,6 @@
 use pathfinder_color::ColorU;
 use warp_core::ui::appearance::Appearance;
+use warp_i18n::t;
 use warp_core::ui::theme::Fill;
 use warpui::elements::{
     ChildView, ClippedScrollStateHandle, ClippedScrollable, Dismiss, ParentElement, ScrollbarWidth,
@@ -181,7 +182,7 @@ impl NodeVersionPopupView {
 
         col.add_child(
             Text::new(
-                "Install nvm to enable version switching",
+                t!("misc-node-install-nvm"),
                 styles.ui_font_family,
                 styles.detail_font_size + 2.,
             )
@@ -193,7 +194,7 @@ impl NodeVersionPopupView {
         col.add_child(
             Container::new(
                 Text::new(
-                    "This menu helps you switch between Node.js versions — but it requires nvm to be installed.",
+                    t!("misc-node-nvm-required"),
                     styles.ui_font_family,
                     styles.detail_font_size,
                 )
@@ -242,7 +243,7 @@ impl NodeVersionPopupView {
         // Heading
         col.add_child(
             Text::new(
-                "No node versions installed",
+                t!("misc-node-no-versions"),
                 styles.ui_font_family,
                 styles.detail_font_size + 2.,
             )
@@ -255,7 +256,7 @@ impl NodeVersionPopupView {
         col.add_child(
             Container::new(
                 Text::new(
-                    "Try installing versions with nvm",
+                    t!("misc-node-try-nvm"),
                     styles.ui_font_family,
                     styles.detail_font_size,
                 )
@@ -286,7 +287,7 @@ impl NodeVersionPopupView {
 
         col.add_child(
             Container::new(
-                Text::new("Installed", styles.ui_font_family, styles.detail_font_size)
+                Text::new(t!("misc-node-installed-badge"), styles.ui_font_family, styles.detail_font_size)
                     .with_style(Properties::default())
                     .with_color(styles.secondary_text_color)
                     .finish(),

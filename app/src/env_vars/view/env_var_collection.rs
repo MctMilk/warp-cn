@@ -11,7 +11,7 @@ use warpui::{
         ScrollbarWidth, Shrinkable, Stack, XAxisAnchor, YAxisAnchor,
     },
     id,
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     platform::Cursor,
     presenter::ChildView,
     ui_components::components::UiComponent,
@@ -60,7 +60,7 @@ use crate::{
             highlight_icon_button_with_context_menu, icon_button_with_context_menu, MenuDirection,
         },
     },
-    util::bindings::CustomAction,
+    util::bindings::{BindingDescriptionFluentExt, CustomAction},
     view_components::{alert::AlertConfig, Alert, DismissibleToast, ToastType},
     workspace::ToastStack,
     Appearance, CloudObjectTypeAndId, TelemetryEvent,
@@ -106,7 +106,7 @@ pub(super) const ERROR_ALERT_MARGIN_TOP: f32 = 8.;
 pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([EditableBinding::new(
         "Close Env Var Collection",
-        "Close",
+        BindingDescription::fluent("binding-env-var-collection-close"),
         EnvVarCollectionAction::Close,
     )
     .with_custom_action(CustomAction::CloseCurrentSession)

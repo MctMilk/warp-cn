@@ -85,18 +85,36 @@ use warpui::{
 
 const TEAM_MEMBERS_HEADER_POSITION_ID: &str = "team_settings:team_members_header";
 // Styling for team create page
-const TEAM_NAME_EDITOR_PLACEHOLDER_TEXT: &str = "Team name";
+fn team_name_editor_placeholder_text() -> String {
+    warp_i18n::t!("settings-teams-team-name-placeholder")
+}
 const CREATE_TEAM_BUTTON_LEFT_PADDING: f32 = 10.;
-const CREATE_TEAM_DESCRIPTION: &str = "When you create a team, you can collaborate on agent-driven development by sharing cloud agent runs, environments, automations, and artifacts. You can also create a shared knowledge store for teammates and agents alike.";
+fn create_team_description() -> String {
+    warp_i18n::t!("settings-teams-create-team-description")
+}
 
 // Styling for team management page
-const LEAVE_TEAM_BUTTON_LABEL: &str = "Leave team";
-const DELETE_TEAM_BUTTON_LABEL: &str = "Delete team";
-const CREATE_TEAM_BUTTON_LABEL: &str = "Create";
-const APPROVE_DOMAINS_PLACEHOLDER: &str = "Domains, comma separated";
-const EMAILS_PLACEHOLDER: &str = "Emails, comma separated";
-const APPROVE_DOMAINS_BUTTON_LABEL: &str = "Set";
-const SEND_EMAIL_INVITES_BUTTON_LABEL: &str = "Invite";
+fn leave_team_button_label() -> String {
+    warp_i18n::t!("settings-teams-leave-team-button")
+}
+fn delete_team_button_label() -> String {
+    warp_i18n::t!("settings-teams-delete-team-button")
+}
+fn create_team_button_label() -> String {
+    warp_i18n::t!("settings-teams-create-button")
+}
+fn approve_domains_placeholder() -> String {
+    warp_i18n::t!("settings-teams-approve-domains-placeholder")
+}
+fn emails_placeholder() -> String {
+    warp_i18n::t!("settings-teams-emails-placeholder")
+}
+fn approve_domains_button_label() -> String {
+    warp_i18n::t!("settings-teams-approve-domains-button")
+}
+fn send_email_invites_button_label() -> String {
+    warp_i18n::t!("settings-teams-send-email-invites-button")
+}
 const BUTTON_WIDTH: f32 = 82.;
 const BUTTON_HEIGHT: f32 = 40.;
 const COPY_LINK_LEFT_PADDING: f32 = 7.;
@@ -110,38 +128,70 @@ const COMPARE_PLANS_BUTTON_WIDTH: f32 = 120.;
 const SUBSECTION_HEADER_FONT_SIZE: f32 = 18.;
 
 const INVITE_LINK_PREFIX: &str = "/team/";
-const INVALID_DOMAINS_INSTRUCTIONS: &str =
-    "Some of the provided domains are invalid, or have already been added.";
+fn invalid_domains_instructions() -> String {
+    warp_i18n::t!("settings-teams-invalid-domains-instructions")
+}
 
-const INVITE_LINK_TOGGLE_INSTRUCTIONS: &str = "As an admin, you can choose whether to enable or disable the ability for team members to invite others by invitation link.";
-const INVITE_LINK_DOMAIN_RESTRICTIONS_INSTRUCTIONS: &str =
-    "Only allow users with emails at specific domains to join your team through the invite link.";
+fn invite_link_toggle_instructions() -> String {
+    warp_i18n::t!("settings-teams-invite-link-toggle-instructions")
+}
+fn invite_link_domain_restrictions_instructions() -> String {
+    warp_i18n::t!("settings-teams-invite-link-domain-restrictions-instructions")
+}
 
-const INVITE_BY_EMAIL_EXPIRY_INSTRUCTIONS: &str = "Email invitations are valid for 7 days.";
-const INVALID_EMAILS_INSTRUCTIONS: &str =
-    "Some of the provided email addresses are invalid, already invited, or members of the team.";
+fn invite_by_email_expiry_instructions() -> String {
+    warp_i18n::t!("settings-teams-invite-by-email-expiry-instructions")
+}
+fn invalid_emails_instructions() -> String {
+    warp_i18n::t!("settings-teams-invalid-emails-instructions")
+}
 
-const OFFLINE_TEXT: &str = "You are offline.";
+fn offline_text() -> String {
+    warp_i18n::t!("settings-teams-offline")
+}
 
-const LIMIT_HIT_ADMIN_TEXT: &str =
-    "You've reached the team member limit for your plan. Upgrade to add more teammates.";
-const LIMIT_HIT_ADMIN_NOT_AUTO_UPGRADEABLE_TEXT: &str = "You've reached the team member limit for your plan. Contact support@warp.dev to add more teammates.";
-const LIMIT_HIT_NON_ADMIN_TEXT: &str =
-    "You've reached the team member limit for your plan. Contact a team admin to add more teammates.";
+fn limit_hit_admin_text() -> String {
+    warp_i18n::t!("settings-teams-limit-hit-admin")
+}
+fn limit_hit_admin_not_auto_upgradeable_text() -> String {
+    warp_i18n::t!("settings-teams-limit-hit-admin-not-auto-upgradeable")
+}
+fn limit_hit_non_admin_text() -> String {
+    warp_i18n::t!("settings-teams-limit-hit-non-admin")
+}
 
-const DELINQUENT_ADMIN_NON_SELF_SERVE_TEXT: &str = "Team invites have been restricted due to a payment issue. Please contact support@warp.dev to restore access.";
-const DELINQUENT_NON_ADMIN_TEXT: &str = "Team invites have been restricted due to a payment issue. Please contact a team admin to restore access.";
-const DELINQUENT_ADMIN_SELF_SERVE_LINE_1_TEXT: &str =
-    "Team invites have been restricted due to a subscription payment issue.";
-const DELINQUENT_ADMIN_SELF_SERVE_LINE_2_PREFIX_TEXT: &str = "Please ";
-const DELINQUENT_ADMIN_SELF_SERVE_LINE_2_LINK_TEXT: &str = "update your payment information";
-const DELINQUENT_ADMIN_SELF_SERVE_LINE_2_SUFFIX_TEXT: &str = " to restore access.";
+fn delinquent_admin_non_self_serve_text() -> String {
+    warp_i18n::t!("settings-teams-delinquent-admin-non-self-serve")
+}
+fn delinquent_non_admin_text() -> String {
+    warp_i18n::t!("settings-teams-delinquent-non-admin")
+}
+fn delinquent_admin_self_serve_line_1_text() -> String {
+    warp_i18n::t!("settings-teams-delinquent-admin-self-serve-line1")
+}
+fn delinquent_admin_self_serve_line_2_prefix_text() -> String {
+    let mut s = warp_i18n::t!("settings-teams-delinquent-admin-self-serve-line2-prefix");
+    s.push(' ');
+    s
+}
+fn delinquent_admin_self_serve_line_2_link_text() -> String {
+    warp_i18n::t!("settings-teams-delinquent-admin-self-serve-line2-link")
+}
+fn delinquent_admin_self_serve_line_2_suffix_text() -> String {
+    let mut s = String::from(" ");
+    s.push_str(&warp_i18n::t!("settings-teams-delinquent-admin-self-serve-line2-suffix"));
+    s
+}
 
-const TEAM_LIMIT_EXCEEDED_ADMIN_NOT_AUTO_UPGRADEABLE_TEXT: &str = "You've exceeded the team member limit for your plan. Please contact support@warp.dev to upgrade your team.";
-const TEAM_LIMIT_EXCEEDED_NON_ADMIN_TEXT: &str =
-    "You've exceeded the team member limit for your plan. Contact a team admin to upgrade your team.";
-const TEAM_LIMIT_EXCEEDED_ADMIN_UPGRADEABLE: &str =
-    "You've exceeded the team member limit for your plan. Upgrade to add more teammates.";
+fn team_limit_exceeded_admin_not_auto_upgradeable_text() -> String {
+    warp_i18n::t!("settings-teams-limit-exceeded-admin-not-auto-upgradeable")
+}
+fn team_limit_exceeded_non_admin_text() -> String {
+    warp_i18n::t!("settings-teams-limit-exceeded-non-admin")
+}
+fn team_limit_exceeded_admin_upgradeable() -> String {
+    warp_i18n::t!("settings-teams-limit-exceeded-admin-upgradeable")
+}
 
 const MAX_CHIP_WIDTH: f32 = 280.;
 
@@ -675,7 +725,7 @@ impl TeamsPageView {
         let font_size = appearance.ui_font_size();
         let create_team_editor = Self::editor(
             |me, event, ctx| me.handle_editor_event(event, ctx),
-            TEAM_NAME_EDITOR_PLACEHOLDER_TEXT,
+            &team_name_editor_placeholder_text(),
             font_size,
             ctx,
         );
@@ -683,7 +733,7 @@ impl TeamsPageView {
         let approve_domains_block_editor = ctx.add_typed_action_view(|ctx| {
             WordBlockEditorView::new(
                 ctx,
-                APPROVE_DOMAINS_PLACEHOLDER,
+                &approve_domains_placeholder(),
                 font_size,
                 vec![',', ' '],
                 MAX_CHIP_WIDTH,
@@ -697,7 +747,7 @@ impl TeamsPageView {
         let email_invites_block_editor = ctx.add_typed_action_view(|ctx| {
             WordBlockEditorView::new(
                 ctx,
-                EMAILS_PLACEHOLDER,
+                &emails_placeholder(),
                 font_size,
                 vec![',', ' '],
                 MAX_CHIP_WIDTH,
@@ -733,7 +783,7 @@ impl TeamsPageView {
             .to_string();
         let rename_team_editor = ctx.add_typed_action_view(|ctx| {
             let mut input = ClickableTextInput::new(team_name, ctx);
-            input.set_placeholder_text("Your new team name", ctx);
+            input.set_placeholder_text(warp_i18n::t!("settings-teams-new-team-name-placeholder"), ctx);
             input
         });
         ctx.subscribe_to_view(&rename_team_editor, |me, _, event, ctx| {
@@ -760,7 +810,7 @@ impl TeamsPageView {
         });
         let transfer_ownership_modal = ctx.add_typed_action_view(|ctx| {
             Modal::new(
-                Some("Transfer team ownership?".to_string()),
+                Some(warp_i18n::t!("settings-teams-transfer-ownership-title")),
                 transfer_ownership_modal_body,
                 ctx,
             )
@@ -877,7 +927,7 @@ impl TeamsPageView {
             }
             UserWorkspacesEvent::EmailInviteRejected(err) => {
                 self.update_team_members_state(ctx);
-                self.show_error("Failed to send invite", Some(err), ctx)
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-send-invite"), Some(err), ctx)
             }
             UserWorkspacesEvent::TeamsChanged => {
                 self.update_team_members_state(ctx);
@@ -890,25 +940,25 @@ impl TeamsPageView {
                 ctx.emit(TeamsPageViewEvent::TeamsChanged);
             }
             UserWorkspacesEvent::ToggleInviteLinksSuccess => {
-                self.show_success("Toggled invite links", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-toggled-invite-links"), ctx);
                 ctx.notify();
             }
             UserWorkspacesEvent::ToggleInviteLinksRejected(err) => {
-                self.show_error("Failed to toggle invite links", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-toggle-invite-links"), Some(err), ctx);
             }
             UserWorkspacesEvent::ResetInviteLinks => {
-                self.show_success("Reset invite links", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-reset-invite-links"), ctx);
                 ctx.notify();
             }
             UserWorkspacesEvent::ResetInviteLinksRejected(err) => {
-                self.show_error("Failed to reset invite links", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-reset-invite-links"), Some(err), ctx);
             }
             UserWorkspacesEvent::DeleteTeamInvite => {
                 self.update_team_members_state(ctx);
-                self.show_success("Deleted invite", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-deleted-invite"), ctx);
             }
             UserWorkspacesEvent::DeleteTeamInviteRejected(err) => {
-                self.show_error("Failed to delete invite", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-delete-invite"), Some(err), ctx);
             }
             UserWorkspacesEvent::AddDomainRestrictionsSuccess => {
                 self.approve_domains_block_editor
@@ -918,19 +968,19 @@ impl TeamsPageView {
                 self.update_approved_domains_state(ctx);
             }
             UserWorkspacesEvent::AddDomainRestrictionsRejected(err) => {
-                self.show_error("Failed to add domain restriction", Some(err), ctx)
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-add-domain-restriction"), Some(err), ctx)
             }
             UserWorkspacesEvent::DeleteDomainRestrictionSuccess => {
                 self.update_approved_domains_state(ctx);
             }
             UserWorkspacesEvent::DeleteDomainRestrictionRejected(err) => {
-                self.show_error("Failed to delete domain restriction", Some(err), ctx)
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-delete-domain-restriction"), Some(err), ctx)
             }
             UserWorkspacesEvent::GenerateUpgradeLink(upgrade_link) => {
                 ctx.open_url(upgrade_link);
             }
             UserWorkspacesEvent::GenerateUpgradeLinkRejected(err) => self.show_error(
-                "Failed to generate upgrade link. Please contact us at feedback@warp.dev",
+                warp_i18n::t!("settings-teams-toast-failed-generate-upgrade-link"),
                 Some(err),
                 ctx,
             ),
@@ -938,16 +988,16 @@ impl TeamsPageView {
                 ctx.open_url(billing_session_link);
             }
             UserWorkspacesEvent::GenerateStripeBillingPortalLinkRejected(err) => self.show_error(
-                "Failed to generate billing link. Please contact us at feedback@warp.dev",
+                warp_i18n::t!("settings-teams-toast-failed-generate-billing-link"),
                 Some(err),
                 ctx,
             ),
             UserWorkspacesEvent::ToggleTeamDiscoverabilitySuccess => {
-                self.show_success("Toggled team discoverability", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-toggled-team-discoverability"), ctx);
                 ctx.notify();
             }
             UserWorkspacesEvent::ToggleTeamDiscoverabilityRejected(err) => {
-                self.show_error("Failed to toggle team discoverability", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-toggle-team-discoverability"), Some(err), ctx);
             }
             UserWorkspacesEvent::JoinTeamWithTeamDiscoverySuccess => {
                 // Force refresh of Warp Drive objects after joining a team
@@ -959,14 +1009,15 @@ impl TeamsPageView {
                     .user_workspaces
                     .as_ref(ctx)
                     .current_team()
-                    .map_or("Successfully joined team".to_string(), |team| {
-                        format!("Successfully joined {}", team.name)
-                    });
+                    .map_or_else(
+                        || warp_i18n::t!("settings-teams-toast-joined-team"),
+                        |team| warp_i18n::t!("settings-teams-toast-joined-team-named", team = team.name.clone()),
+                    );
                 self.show_success(message, ctx);
                 ctx.notify();
             }
             UserWorkspacesEvent::JoinTeamWithTeamDiscoveryRejected(err) => {
-                self.show_error("Failed to join team", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-join-team"), Some(err), ctx);
             }
             UserWorkspacesEvent::FetchDiscoverableTeamsSuccess(teams) => {
                 self.discoverable_teams_states = teams
@@ -980,18 +1031,18 @@ impl TeamsPageView {
                 log::error!("Failed to fetch discoverable teams: {e:?}");
             }
             UserWorkspacesEvent::TransferTeamOwnershipSuccess => {
-                self.show_success("Successfully transferred team ownership", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-transferred-ownership"), ctx);
                 ctx.notify();
             }
             UserWorkspacesEvent::TransferTeamOwnershipRejected(err) => {
-                self.show_error("Failed to transfer team ownership", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-transfer-ownership"), Some(err), ctx);
             }
             UserWorkspacesEvent::SetTeamMemberRoleSuccess => {
                 self.update_team_members_state(ctx);
-                self.show_success("Successfully updated team member role", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-updated-member-role"), ctx);
             }
             UserWorkspacesEvent::SetTeamMemberRoleRejected(err) => {
-                self.show_error("Failed to update team member role", Some(err), ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-update-member-role"), Some(err), ctx);
             }
             UserWorkspacesEvent::UpdateWorkspaceSettingsSuccess => {
                 // as of right now, this is only emitted on the billing & usage page
@@ -1042,18 +1093,17 @@ impl TeamsPageView {
     ) {
         match event {
             TeamUpdateManagerEvent::LeaveError => {
-                let error = "Error leaving team".to_string();
-                self.show_error(error, None, ctx);
+                self.show_error(warp_i18n::t!("settings-teams-toast-error-leaving-team"), None, ctx);
             }
             TeamUpdateManagerEvent::LeaveSuccess => {
-                self.show_success("Successfully left team", ctx);
+                self.show_success(warp_i18n::t!("settings-teams-toast-left-team"), ctx);
                 ctx.notify();
             }
             TeamUpdateManagerEvent::RenameTeamSuccess => {
-                self.show_success("Successfully renamed team", ctx)
+                self.show_success(warp_i18n::t!("settings-teams-toast-renamed-team"), ctx)
             }
             TeamUpdateManagerEvent::RenameTeamError => {
-                self.show_error("Failed to rename team", None, ctx)
+                self.show_error(warp_i18n::t!("settings-teams-toast-failed-rename-team"), None, ctx)
             }
         }
     }
@@ -1325,7 +1375,7 @@ impl TeamsPageView {
     fn copy_invite_link(&mut self, link: &str, ctx: &mut ViewContext<Self>) {
         ctx.clipboard()
             .write(ClipboardContent::plain_text(link.to_string()));
-        self.show_toast("Link copied to clipboard!", ToastFlavor::Default, ctx);
+        self.show_toast(warp_i18n::t!("settings-teams-toast-link-copied"), ToastFlavor::Default, ctx);
     }
 
     fn remove_user_from_team(
@@ -1457,9 +1507,9 @@ impl TeamsPageView {
             .collect();
 
         let message = if unique_emails.len() == 1 {
-            "Your invite is on the way!".to_string()
+            warp_i18n::t!("settings-teams-toast-invite-on-the-way")
         } else {
-            format!("Your {} invites are on the way!", unique_emails.len())
+            warp_i18n::t!("settings-teams-toast-invites-on-the-way", count = unique_emails.len())
         };
         self.show_success(message, ctx);
         self.user_workspaces
@@ -1598,7 +1648,7 @@ impl TeamsPageView {
             let actions = if current_user_has_admin_permissions {
                 vec![ItemAction {
                     icon: Icon::X,
-                    label: "Cancel invite".to_string(),
+                    label: warp_i18n::t!("settings-teams-action-cancel-invite"),
                     action: TeamsPageAction::DeletePendingEmailInvitation {
                         team_uid: team.uid,
                         invitee_email: email_invite.invitee_email.clone(),
@@ -1635,7 +1685,7 @@ impl TeamsPageView {
                 if current_user_has_owner_permissions && !team_member_has_owner_permissions {
                     actions.push(ItemAction {
                         icon: Icon::Users,
-                        label: "Transfer ownership".to_string(),
+                        label: warp_i18n::t!("settings-teams-action-transfer-ownership"),
                         action: TeamsPageAction::ShowTransferOwnershipModal {
                             new_owner_email: member.email.clone(),
                             new_owner_uid: member.uid,
@@ -1652,7 +1702,7 @@ impl TeamsPageView {
                     if team_member_has_admin_permissions {
                         actions.push(ItemAction {
                             icon: Icon::ArrowDown,
-                            label: "Demote from admin".to_string(),
+                            label: warp_i18n::t!("settings-teams-action-demote-from-admin"),
                             action: TeamsPageAction::SetTeamMemberRole {
                                 team_uid: team.uid,
                                 user_uid: member.uid,
@@ -1662,7 +1712,7 @@ impl TeamsPageView {
                     } else {
                         actions.push(ItemAction {
                             icon: Icon::ArrowUp,
-                            label: "Promote to admin".to_string(),
+                            label: warp_i18n::t!("settings-teams-action-promote-to-admin"),
                             action: TeamsPageAction::SetTeamMemberRole {
                                 team_uid: team.uid,
                                 user_uid: member.uid,
@@ -1676,7 +1726,7 @@ impl TeamsPageView {
                 if current_user_has_admin_permissions && !team_member_has_owner_permissions {
                     actions.push(ItemAction {
                         icon: Icon::X,
-                        label: "Remove from team".to_string(),
+                        label: warp_i18n::t!("settings-teams-action-remove-from-team"),
                         action: TeamsPageAction::RemoveUserFromTeam {
                             user_uid: member.uid,
                             team_uid: team.uid,
@@ -1809,7 +1859,7 @@ impl TeamsWidget {
         .finish();
 
         let member_pricing_header =
-            Container::new(self.render_subsection_header("Team members".to_owned(), appearance))
+            Container::new(self.render_subsection_header(warp_i18n::t!("settings-teams-section-team-members"), appearance))
                 .with_margin_bottom(8.)
                 .finish();
 
@@ -2062,7 +2112,7 @@ impl TeamsWidget {
             .with_text_and_icon_label(
                 TextAndIcon::new(
                     TextAndIconAlignment::IconFirst,
-                    "Contact support",
+                    warp_i18n::t!("settings-teams-contact-support"),
                     Icon::Phone.to_warpui_icon(appearance.theme().accent()),
                     MainAxisSize::Min,
                     MainAxisAlignment::Center,
@@ -2091,7 +2141,7 @@ impl TeamsWidget {
             .with_text_and_icon_label(
                 TextAndIcon::new(
                     TextAndIconAlignment::IconFirst,
-                    "Manage billing",
+                    warp_i18n::t!("settings-teams-manage-billing"),
                     Icon::CoinsStacked.to_warpui_icon(appearance.theme().accent()),
                     MainAxisSize::Min,
                     MainAxisAlignment::Center,
@@ -2122,7 +2172,7 @@ impl TeamsWidget {
             .with_text_and_icon_label(
                 TextAndIcon::new(
                     TextAndIconAlignment::IconFirst,
-                    "Open admin panel",
+                    warp_i18n::t!("settings-teams-open-admin-panel"),
                     Icon::Users.to_warpui_icon(appearance.theme().accent()),
                     MainAxisSize::Min,
                     MainAxisAlignment::Center,
@@ -2156,17 +2206,17 @@ impl TeamsWidget {
             // If the team is upgradeable to self-serve tier, show them the upgrade link.
             if team.billing_metadata.can_upgrade_to_higher_tier_plan() {
                 let description = if team.billing_metadata.can_upgrade_to_build_plan() {
-                    "Upgrade to Build"
+                    warp_i18n::t!("settings-teams-upgrade-build")
                 } else {
                     match team.billing_metadata.customer_type {
-                        CustomerType::Prosumer => "Upgrade to Turbo plan",
-                        CustomerType::Turbo => "Upgrade to Lightspeed plan",
-                        _ => "Compare plans",
+                        CustomerType::Prosumer => warp_i18n::t!("settings-teams-upgrade-turbo"),
+                        CustomerType::Turbo => warp_i18n::t!("settings-teams-upgrade-lightspeed"),
+                        _ => warp_i18n::t!("settings-teams-compare-plans"),
                     }
                 };
                 billing_links.add_child(
                     Container::new(self.render_compare_plans_button(
-                        description,
+                        &description,
                         self.mouse_state_handles.upgrade_link.clone(),
                         team_uid,
                         appearance,
@@ -2202,10 +2252,10 @@ impl TeamsWidget {
     ) -> Box<dyn Element> {
         let mut section = Flex::column();
         let sub_header_text = match team.billing_metadata.customer_type {
-            CustomerType::Free => "Free plan usage limits",
-            _ => "Plan usage limits",
+            CustomerType::Free => warp_i18n::t!("settings-teams-free-plan-usage-limits"),
+            _ => warp_i18n::t!("settings-teams-plan-usage-limits"),
         };
-        section.add_child(self.render_subsection_header(sub_header_text.into(), appearance));
+        section.add_child(self.render_subsection_header(sub_header_text, appearance));
 
         let mut shared_objects_usage_row =
             Flex::row().with_cross_axis_alignment(CrossAxisAlignment::Center);
@@ -2214,7 +2264,7 @@ impl TeamsWidget {
             if !policy.is_unlimited {
                 let mut shared_notebooks_column = Flex::column();
                 shared_notebooks_column.add_child(
-                    self.render_plan_usage_header("Shared Notebooks".into(), appearance),
+                    self.render_plan_usage_header(warp_i18n::t!("settings-teams-plan-shared-notebooks"), appearance),
                 );
                 let num_shared_notebooks = cloud_model
                     .active_notebooks_in_space(Space::Team { team_uid: team.uid }, app)
@@ -2239,7 +2289,7 @@ impl TeamsWidget {
             if !policy.is_unlimited {
                 let mut shared_workflows_column = Flex::column();
                 shared_workflows_column.add_child(
-                    self.render_plan_usage_header("Shared Workflows".into(), appearance),
+                    self.render_plan_usage_header(warp_i18n::t!("settings-teams-plan-shared-workflows"), appearance),
                 );
                 let num_shared_workflows = cloud_model
                     .active_workflows_in_space(Space::Team { team_uid: team.uid }, app)
@@ -2335,7 +2385,7 @@ impl TeamsWidget {
 
         // 1) "Invite by Link" subsection header
         invite_by_link_header_row
-            .add_child(self.render_subsection_header("Invite by Link".to_owned(), appearance));
+            .add_child(self.render_subsection_header(warp_i18n::t!("settings-teams-section-invite-by-link"), appearance));
 
         // 1.1) Toggle to the right of header only renders if user is admin
         if has_admin_permissions {
@@ -2362,7 +2412,7 @@ impl TeamsWidget {
         if has_admin_permissions {
             section.add_child(
                 Container::new(self.render_sub_text(
-                    INVITE_LINK_TOGGLE_INSTRUCTIONS.into(),
+                    invite_link_toggle_instructions().into(),
                     appearance,
                     Some(Coords::uniform(0.).right(48.)),
                 ))
@@ -2384,7 +2434,7 @@ impl TeamsWidget {
                         appearance
                             .ui_builder()
                             .link(
-                                "Reset links".into(),
+                                warp_i18n::t!("settings-teams-reset-links"),
                                 None,
                                 Some(Box::new(move |ctx| {
                                     ctx.dispatch_typed_action(TeamsPageAction::ResetInviteLinks {
@@ -2431,7 +2481,7 @@ impl TeamsWidget {
 
         // "Invite by Email" subsection header
         section.add_child(
-            Container::new(self.render_subsection_header("Invite by Email".to_owned(), appearance))
+            Container::new(self.render_subsection_header(warp_i18n::t!("settings-teams-section-invite-by-email"), appearance))
                 .with_padding_top(CONTENT_SEPARATION_PADDING)
                 .with_padding_bottom(8.)
                 .finish(),
@@ -2450,7 +2500,7 @@ impl TeamsWidget {
                     // Instruction text for invite by email expiry
                     section.add_child(
                         Container::new(self.render_sub_text(
-                            INVITE_BY_EMAIL_EXPIRY_INSTRUCTIONS.into(),
+                            invite_by_email_expiry_instructions().into(),
                             appearance,
                             Some(Coords::uniform(0.).right(48.)),
                         ))
@@ -2486,7 +2536,7 @@ impl TeamsWidget {
                     {
                         section.add_child(
                             Container::new(self.render_error_sub_text(
-                                INVALID_EMAILS_INSTRUCTIONS.into(),
+                                invalid_emails_instructions().into(),
                                 appearance,
                             ))
                             .with_padding_top(8.)
@@ -2506,9 +2556,9 @@ impl TeamsWidget {
                             .with_main_axis_alignment(MainAxisAlignment::SpaceBetween);
 
                         let text = if has_admin_permissions {
-                            LIMIT_HIT_ADMIN_TEXT
+                            limit_hit_admin_text()
                         } else {
-                            LIMIT_HIT_NON_ADMIN_TEXT
+                            limit_hit_non_admin_text()
                         };
 
                         limit_hit_text_and_upgrade_button.add_child(
@@ -2523,9 +2573,10 @@ impl TeamsWidget {
                             .finish(),
                         );
 
+                        let compare_plans_label = warp_i18n::t!("settings-teams-compare-plans");
                         limit_hit_text_and_upgrade_button.add_child(
                             self.render_compare_plans_button(
-                                "Compare plans",
+                                &compare_plans_label,
                                 self.mouse_state_handles
                                     .invite_by_email_upgrade_button
                                     .clone(),
@@ -2546,9 +2597,9 @@ impl TeamsWidget {
                         // In that case show message to contact their admin/support with no
                         // button to `/upgrade`.
                         let text = if has_admin_permissions {
-                            LIMIT_HIT_ADMIN_NOT_AUTO_UPGRADEABLE_TEXT
+                            limit_hit_admin_not_auto_upgradeable_text()
                         } else {
-                            LIMIT_HIT_NON_ADMIN_TEXT
+                            limit_hit_non_admin_text()
                         };
                         self.render_sub_text(
                             text.into(),
@@ -2575,14 +2626,14 @@ impl TeamsWidget {
                         let mut limit_exceeded_with_upgrade_text = Flex::column();
 
                         limit_exceeded_with_upgrade_text.add_child(self.render_sub_text(
-                            DELINQUENT_ADMIN_SELF_SERVE_LINE_1_TEXT.into(),
+                            delinquent_admin_self_serve_line_1_text().into(),
                             appearance,
                             None,
                         ));
 
                         let mut manage_billing_link_line = Flex::row();
                         manage_billing_link_line.add_child(self.render_sub_text(
-                            DELINQUENT_ADMIN_SELF_SERVE_LINE_2_PREFIX_TEXT.into(),
+                            delinquent_admin_self_serve_line_2_prefix_text().into(),
                             appearance,
                             None,
                         ));
@@ -2590,7 +2641,7 @@ impl TeamsWidget {
                             appearance
                                 .ui_builder()
                                 .link(
-                                    DELINQUENT_ADMIN_SELF_SERVE_LINE_2_LINK_TEXT.into(),
+                                    delinquent_admin_self_serve_line_2_link_text().into(),
                                     None,
                                     Some(Box::new(move |ctx| {
                                         ctx.dispatch_typed_action(
@@ -2608,7 +2659,7 @@ impl TeamsWidget {
                                 .finish(),
                         );
                         manage_billing_link_line.add_child(self.render_sub_text(
-                            DELINQUENT_ADMIN_SELF_SERVE_LINE_2_SUFFIX_TEXT.into(),
+                            delinquent_admin_self_serve_line_2_suffix_text().into(),
                             appearance,
                             None,
                         ));
@@ -2622,7 +2673,7 @@ impl TeamsWidget {
                         // delinquent enterprise customer). In that case show message to
                         // contact support instead.
                         self.render_sub_text(
-                            DELINQUENT_ADMIN_NON_SELF_SERVE_TEXT.into(),
+                            delinquent_admin_non_self_serve_text().into(),
                             appearance,
                             Some(Coords::uniform(0.).right(48.)),
                         )
@@ -2631,7 +2682,7 @@ impl TeamsWidget {
                     // If user is not admin, show them a message that asks them to contact
                     // their admin to fix their billing instead.
                     self.render_sub_text(
-                        DELINQUENT_NON_ADMIN_TEXT.into(),
+                        delinquent_non_admin_text().into(),
                         appearance,
                         Some(Coords::uniform(0.).right(48.)),
                     )
@@ -2655,9 +2706,9 @@ impl TeamsWidget {
                         .with_main_axis_alignment(MainAxisAlignment::SpaceBetween);
 
                     let text = if has_admin_permissions {
-                        TEAM_LIMIT_EXCEEDED_ADMIN_UPGRADEABLE
+                        team_limit_exceeded_admin_upgradeable()
                     } else {
-                        TEAM_LIMIT_EXCEEDED_NON_ADMIN_TEXT
+                        team_limit_exceeded_non_admin_text()
                     };
 
                     limit_exceeded_text_and_upgrade_button.add_child(
@@ -2672,9 +2723,10 @@ impl TeamsWidget {
                         .finish(),
                     );
 
+                    let compare_plans_label = warp_i18n::t!("settings-teams-compare-plans");
                     limit_exceeded_text_and_upgrade_button.add_child(
                         self.render_compare_plans_button(
-                            "Compare plans",
+                            &compare_plans_label,
                             self.mouse_state_handles
                                 .invite_by_email_upgrade_button
                                 .clone(),
@@ -2695,9 +2747,9 @@ impl TeamsWidget {
                     // In that case show message to contact their admin/support with no
                     // button to `/upgrade`.
                     let text = if has_admin_permissions {
-                        TEAM_LIMIT_EXCEEDED_ADMIN_NOT_AUTO_UPGRADEABLE_TEXT
+                        team_limit_exceeded_admin_not_auto_upgradeable_text()
                     } else {
-                        TEAM_LIMIT_EXCEEDED_NON_ADMIN_TEXT
+                        team_limit_exceeded_non_admin_text()
                     };
                     self.render_sub_text(
                         text.into(),
@@ -2732,7 +2784,7 @@ impl TeamsWidget {
         section.add_child(
             SavePosition::new(
                 Container::new(
-                    self.render_subsection_header("Team Members".to_owned(), appearance),
+                    self.render_subsection_header(warp_i18n::t!("settings-teams-section-team-members-caps"), appearance),
                 )
                 .with_padding_bottom(16.)
                 .finish(),
@@ -2764,7 +2816,7 @@ impl TeamsWidget {
 
         // 1) "Restrict by domain" header
         section.add_child(
-            Container::new(self.render_sub_header("Restrict by domain".to_owned(), appearance))
+            Container::new(self.render_sub_header(warp_i18n::t!("settings-teams-section-restrict-by-domain"), appearance))
                 .with_padding_top(16.)
                 .finish(),
         );
@@ -2773,7 +2825,7 @@ impl TeamsWidget {
         if has_admin_permissions {
             section.add_child(
                 Container::new(self.render_sub_text(
-                    INVITE_LINK_DOMAIN_RESTRICTIONS_INSTRUCTIONS.into(),
+                    invite_link_domain_restrictions_instructions().into(),
                     appearance,
                     Some(Coords::uniform(0.).right(48.)),
                 ))
@@ -2810,7 +2862,7 @@ impl TeamsWidget {
             {
                 section.add_child(
                     Container::new(
-                        self.render_error_sub_text(INVALID_DOMAINS_INSTRUCTIONS.into(), appearance),
+                        self.render_error_sub_text(invalid_domains_instructions().into(), appearance),
                     )
                     .with_padding_top(8.)
                     .finish(),
@@ -2826,7 +2878,7 @@ impl TeamsWidget {
                 let actions = if has_admin_permissions {
                     vec![ItemAction {
                         icon: Icon::X,
-                        label: "Remove domain".to_string(),
+                        label: warp_i18n::t!("settings-teams-action-remove-domain"),
                         action: TeamsPageAction::DeleteDomainRestriction {
                             domain_uid: domain_restriction.uid,
                             team_uid: team.uid,
@@ -2875,7 +2927,7 @@ impl TeamsWidget {
             (None, ButtonVariant::Basic)
         };
         Container::new(self.render_button(
-            APPROVE_DOMAINS_BUTTON_LABEL,
+            &approve_domains_button_label(),
             variant,
             self.mouse_state_handles.approve_domains_button.clone(),
             action,
@@ -2902,7 +2954,7 @@ impl TeamsWidget {
             (None, ButtonVariant::Basic)
         };
         Container::new(self.render_button(
-            SEND_EMAIL_INVITES_BUTTON_LABEL,
+            &send_email_invites_button_label(),
             variant,
             self.mouse_state_handles.send_email_invites_button.clone(),
             action,
@@ -2943,7 +2995,7 @@ impl TeamsWidget {
             .with_main_axis_size(MainAxisSize::Max)
             .with_main_axis_alignment(MainAxisAlignment::SpaceBetween);
         discoverable_header_row.add_child(
-            Container::new(self.render_sub_header("Make team discoverable".to_owned(), appearance))
+            Container::new(self.render_sub_header(warp_i18n::t!("settings-teams-section-make-team-discoverable"), appearance))
                 .with_padding_top(CONTENT_SEPARATION_PADDING)
                 .finish(),
         );
@@ -2976,7 +3028,7 @@ impl TeamsWidget {
         // Instruction text for toggle
         let domain = current_user_email.split('@').nth(1).unwrap_or("");
         let team_discoverability_instructions =
-            format!("Allow Warp users with an @{domain} email to find and join the team.");
+            warp_i18n::t!("settings-teams-allow-domain-find", domain = domain.to_string());
         section.add_child(
             Container::new(self.render_sub_text(
                 team_discoverability_instructions,
@@ -3001,12 +3053,12 @@ impl TeamsWidget {
 
         let (label, action) = if is_team_owner {
             (
-                DELETE_TEAM_BUTTON_LABEL,
+                delete_team_button_label(),
                 TeamsPageAction::ShowDeleteTeamConfirmationDialog,
             )
         } else {
             (
-                LEAVE_TEAM_BUTTON_LABEL,
+                leave_team_button_label(),
                 TeamsPageAction::ShowLeaveTeamConfirmationDialog,
             )
         };
@@ -3085,7 +3137,7 @@ impl TeamsWidget {
             let link = appearance
                 .ui_builder()
                 .link(
-                    "Manage plan".into(),
+                    warp_i18n::t!("settings-teams-manage-plan"),
                     None,
                     Some(Box::new(move |ctx| {
                         ctx.dispatch_typed_action(
@@ -3377,7 +3429,7 @@ impl TeamsWidget {
                 );
                 (link, true)
             }
-            None => ("Failed to load invite link.".into(), false),
+            None => (warp_i18n::t!("settings-teams-failed-load-invite-link"), false),
         };
         let theme = appearance.theme();
 
@@ -3653,13 +3705,13 @@ impl TeamsWidget {
         let mut page = Flex::column();
 
         // Title, subtitle, and description
-        page.add_child(render_sub_header(appearance, "Teams".to_string(), None));
+        page.add_child(render_sub_header(appearance, warp_i18n::t!("settings-teams-title"), None));
         page.add_child(
-            self.render_sub_header_with_subtext_color(appearance, "Create a team".to_string()),
+            self.render_sub_header_with_subtext_color(appearance, warp_i18n::t!("settings-teams-section-create-a-team")),
         );
         page.add_child(
             Container::new(
-                self.render_description(CREATE_TEAM_DESCRIPTION.to_string(), appearance),
+                self.render_description(create_team_description().to_string(), appearance),
             )
             .with_padding_top(6.)
             .finish(),
@@ -3682,10 +3734,9 @@ impl TeamsWidget {
             .with_margin_left(-4.)
             .finish();
             let checkbox_row_text = if let Some(domain) = view.auth_state.user_email_domain() {
-                format!("Allow Warp users with an @{domain} email to find and join the team.")
+                warp_i18n::t!("settings-teams-allow-domain-find", domain = domain.to_string())
             } else {
-                "Allow Warp users with the same email domain as you to find and join the team."
-                    .to_string()
+                warp_i18n::t!("settings-teams-allow-same-domain-find")
             };
             let checkbox_row = Container::new(
                 Flex::row()
@@ -3715,7 +3766,7 @@ impl TeamsWidget {
             page.add_child(render_separator(appearance));
             page.add_child(self.render_sub_header_with_subtext_color(
                 appearance,
-                "Or, join an existing team within your company".to_string(),
+                warp_i18n::t!("settings-teams-section-or-join-existing"),
             ));
 
             // Team discovery
@@ -3803,8 +3854,7 @@ impl TeamsWidget {
         single_team.add_child(
             Container::new(
                 self.render_sub_text(
-                    "Join this team and start collaborating on workflows, notebooks, and more."
-                        .to_string(),
+                    warp_i18n::t!("settings-teams-join-and-collaborate"),
                     appearance,
                     None,
                 ),
@@ -3930,7 +3980,7 @@ impl TeamsWidget {
                 ButtonVariant::Accent,
                 self.mouse_state_handles.create_team_button.clone(),
             )
-            .with_centered_text_label(CREATE_TEAM_BUTTON_LABEL.to_owned())
+            .with_centered_text_label(create_team_button_label().to_owned())
             .with_style(UiComponentStyles {
                 font_color: Some(
                     appearance
@@ -4009,7 +4059,7 @@ impl TeamsWidget {
                     font_size: Some(14.),
                     ..Default::default()
                 })
-                .with_centered_text_label("Contact Admin to request access".to_string())
+                .with_centered_text_label(warp_i18n::t!("settings-teams-contact-admin-request-access"))
                 .disabled()
                 .build()
                 .finish()
@@ -4054,7 +4104,7 @@ impl SettingsWidget for TeamsWidget {
         } else {
             appearance
                 .ui_builder()
-                .span(OFFLINE_TEXT.to_string())
+                .span(offline_text().to_string())
                 .build()
                 .finish()
         };

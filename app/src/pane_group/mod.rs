@@ -89,7 +89,7 @@ use warpui::elements::{
     Clipped, CrossAxisAlignment, DispatchEventResult, EventHandler, Flex, MainAxisSize, Shrinkable,
     Stack,
 };
-use warpui::keymap::{Context, EditableBinding, FixedBinding};
+use warpui::keymap::{BindingDescription, Context, EditableBinding, FixedBinding};
 use warpui::notification::NotificationSendError;
 
 use warpui::windowing::WindowManager;
@@ -152,7 +152,7 @@ use session_sharing_protocol::sharer::SessionSourceType;
 use settings::Setting as _;
 
 use crate::code::active_file::ActiveFileModel;
-use crate::util::bindings::{is_binding_pty_compliant, CustomAction};
+use crate::util::bindings::{is_binding_pty_compliant, BindingDescriptionFluentExt, CustomAction};
 use crate::workflows::{WorkflowSelectionSource, WorkflowSource, WorkflowType};
 
 use crate::palette::PaletteMode;
@@ -330,14 +330,14 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "pane_group:close_current_session",
-            "Close Current Session",
+            BindingDescription::fluent("binding-pane-group-close-current-session"),
             PaneGroupAction::RemoveActive,
         )
         .with_custom_action(CustomAction::CloseCurrentSession)
         .with_context_predicate(id!("PaneGroup")),
         EditableBinding::new(
             "pane_group:add_left",
-            "Split pane left",
+            BindingDescription::fluent("binding-pane-group-add-left"),
             PaneGroupAction::Add(Direction::Left),
         )
         .with_context_predicate(id!("PaneGroup") & !id!("PaneGroup_PaneDragging"))
@@ -345,7 +345,7 @@ pub fn init(app: &mut AppContext) {
         .with_enabled(|| ContextFlag::CreateNewSession.is_enabled()),
         EditableBinding::new(
             "pane_group:add_up",
-            "Split pane up",
+            BindingDescription::fluent("binding-pane-group-add-up"),
             PaneGroupAction::Add(Direction::Up),
         )
         .with_context_predicate(id!("PaneGroup") & !id!("PaneGroup_PaneDragging"))
@@ -353,7 +353,7 @@ pub fn init(app: &mut AppContext) {
         .with_enabled(|| ContextFlag::CreateNewSession.is_enabled()),
         EditableBinding::new(
             "pane_group:navigate_left",
-            "Switch panes left",
+            BindingDescription::fluent("binding-pane-group-navigate-left"),
             PaneGroupAction::NavigateLeft,
         )
         .with_context_predicate(
@@ -362,7 +362,7 @@ pub fn init(app: &mut AppContext) {
         .with_key_binding("cmdorctrl-alt-left"),
         EditableBinding::new(
             "pane_group:navigate_right",
-            "Switch panes right",
+            BindingDescription::fluent("binding-pane-group-navigate-right"),
             PaneGroupAction::NavigateRight,
         )
         .with_context_predicate(
@@ -371,7 +371,7 @@ pub fn init(app: &mut AppContext) {
         .with_key_binding("cmdorctrl-alt-right"),
         EditableBinding::new(
             "pane_group:navigate_up",
-            "Switch panes up",
+            BindingDescription::fluent("binding-pane-group-navigate-up"),
             PaneGroupAction::NavigateUp,
         )
         .with_context_predicate(
@@ -380,7 +380,7 @@ pub fn init(app: &mut AppContext) {
         .with_key_binding("cmdorctrl-alt-up"),
         EditableBinding::new(
             "pane_group:navigate_down",
-            "Switch panes down",
+            BindingDescription::fluent("binding-pane-group-navigate-down"),
             PaneGroupAction::NavigateDown,
         )
         .with_context_predicate(
@@ -395,7 +395,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "pane_group:resize_left",
-            "Resize pane > Move divider left",
+            BindingDescription::fluent("binding-pane-group-resize-left"),
             PaneGroupAction::ResizeLeft,
         )
         .with_context_predicate(
@@ -404,7 +404,7 @@ pub fn init(app: &mut AppContext) {
         .with_mac_key_binding("cmd-ctrl-left"),
         EditableBinding::new(
             "pane_group:resize_right",
-            "Resize pane > Move divider right",
+            BindingDescription::fluent("binding-pane-group-resize-right"),
             PaneGroupAction::ResizeRight,
         )
         .with_context_predicate(
@@ -413,7 +413,7 @@ pub fn init(app: &mut AppContext) {
         .with_mac_key_binding("cmd-ctrl-right"),
         EditableBinding::new(
             "pane_group:resize_up",
-            "Resize pane > Move divider up",
+            BindingDescription::fluent("binding-pane-group-resize-up"),
             PaneGroupAction::ResizeUp,
         )
         .with_context_predicate(
@@ -422,7 +422,7 @@ pub fn init(app: &mut AppContext) {
         .with_mac_key_binding("cmd-ctrl-up"),
         EditableBinding::new(
             "pane_group:resize_down",
-            "Resize pane > Move divider down",
+            BindingDescription::fluent("binding-pane-group-resize-down"),
             PaneGroupAction::ResizeDown,
         )
         .with_context_predicate(
@@ -434,7 +434,7 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "pane_group:add_down",
-            "Split pane down",
+            BindingDescription::fluent("binding-pane-group-add-down"),
             PaneGroupAction::Add(Direction::Down),
         )
         .with_context_predicate(id!("PaneGroup") & !id!("PaneGroup_PaneDragging"))
@@ -442,7 +442,7 @@ pub fn init(app: &mut AppContext) {
         .with_enabled(|| ContextFlag::CreateNewSession.is_enabled()),
         EditableBinding::new(
             "pane_group:add_right",
-            "Split pane right",
+            BindingDescription::fluent("binding-pane-group-add-right"),
             PaneGroupAction::Add(Direction::Right),
         )
         .with_context_predicate(id!("PaneGroup") & !id!("PaneGroup_PaneDragging"))
@@ -450,7 +450,7 @@ pub fn init(app: &mut AppContext) {
         .with_enabled(|| ContextFlag::CreateNewSession.is_enabled()),
         EditableBinding::new(
             "pane_group:toggle_maximize_pane",
-            "Toggle Maximize Active Pane",
+            BindingDescription::fluent("binding-pane-group-toggle-maximize-pane"),
             PaneGroupAction::ToggleMaximizePane,
         )
         .with_context_predicate(id!("PaneGroup") & !id!("PaneGroup_PaneDragging"))

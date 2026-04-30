@@ -15,7 +15,9 @@ use crate::terminal::cli_agent_sessions::CLIAgentSessionsModel;
 use crate::terminal::input::MenuPositioning;
 use crate::terminal::CLIAgent;
 use crate::ui_components::{buttons::icon_button_with_color, icons};
-use crate::util::bindings::{keybinding_name_to_display_string, CustomAction};
+use crate::util::bindings::{
+    keybinding_name_to_display_string, BindingDescriptionFluentExt, CustomAction,
+};
 #[cfg(feature = "local_fs")]
 use crate::util::openable_file_type::FileTarget;
 use crate::view_components::action_button::{ActionButton, PaneHeaderTheme};
@@ -40,7 +42,7 @@ use warp_core::features::FeatureFlag;
 use warp_core::ui::Icon;
 use warp_util::path::LineAndColumnArg;
 use warpui::elements::{ChildAnchor, Empty, PositionedElementAnchor};
-use warpui::keymap::EditableBinding;
+use warpui::keymap::{BindingDescription, EditableBinding};
 use warpui::EntityId;
 use warpui::{
     elements::{
@@ -349,7 +351,7 @@ impl RightPanelView {
 
         app.register_editable_bindings([EditableBinding::new(
             "workspace:toggle_maximize_code_review_panel",
-            "Toggle Maximize Code Review Panel",
+            BindingDescription::fluent("binding-right-panel-toggle-maximize-code-review"),
             RightPanelAction::ToggleMaximize,
         )
         .with_enabled(|| cfg!(feature = "local_fs"))

@@ -710,13 +710,13 @@ pub fn accessibility_content(
     match (request_type, update_available) {
         // Found autoupdate
         (RequestType::ManualCheck, Ok(UpdateReady::Yes { .. })) => Some(AccessibilityContent::new(
-            "Update available.",
-            "Use the command palette to install and relaunch Warp",
+            warp_i18n::t!("a11y-autoupdate-update-available-label").to_string(),
+            warp_i18n::t!("a11y-autoupdate-update-available-help").to_string(),
             WarpA11yRole::HelpRole,
         )),
         // Any non-successful autoupdate check
         (RequestType::ManualCheck, _) => Some(AccessibilityContent::new_without_help(
-            "No updates available",
+            warp_i18n::t!("a11y-autoupdate-no-updates").to_string(),
             WarpA11yRole::HelpRole,
         )),
         _ => None,

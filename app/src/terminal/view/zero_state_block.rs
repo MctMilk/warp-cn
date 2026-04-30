@@ -1,5 +1,6 @@
 use settings::Setting;
 use warp_core::{report_if_error, ui::Icon};
+use warp_i18n::t;
 use warpui::{
     elements::{
         ChildAnchor, Container, CrossAxisAlignment, Flex, MainAxisSize, OffsetPositioning,
@@ -166,7 +167,7 @@ impl View for TerminalViewZeroStateBlock {
             )
             .with_child(
                 Text::new(
-                    "New terminal session",
+                    t!("terminal-zero-new-session"),
                     appearance.ui_font_family(),
                     title_font_size,
                 )
@@ -296,7 +297,7 @@ impl View for TerminalViewZeroStateBlock {
                 theme.disabled_text_color(theme.background())
             };
             Text::new(
-                "Don't show again",
+                t!("terminal-zero-dont-show-again"),
                 appearance.ui_font_family(),
                 appearance.monospace_font_size() - 4.,
             )

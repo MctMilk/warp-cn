@@ -15,7 +15,7 @@ use warpui::{
         MainAxisAlignment, MainAxisSize, MouseStateHandle, ParentElement, SavePosition, Shrinkable,
         Stack, Text,
     },
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     presenter::ChildView,
     ui_components::{
         button::{ButtonVariant, TextAndIcon, TextAndIconAlignment},
@@ -47,6 +47,7 @@ use crate::{
     settings::FontSettings,
     terminal::model::session::Session,
     ui_components::icons::Icon,
+    util::bindings::BindingDescriptionFluentExt,
     view_components::{MarkdownToggleEvent, MarkdownToggleView},
     workflows::{WorkflowSource, WorkflowType},
     workspace::ActiveSession,
@@ -219,14 +220,14 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             "notebookview:focus_terminal_input",
-            "Focus Terminal Input from File",
+            BindingDescription::fluent("binding-notebooks-file-focus-terminal-input"),
             FileNotebookAction::FocusTerminalInput,
         )
         .with_context_predicate(id!("FileNotebookView"))
         .with_key_binding(cmd_or_ctrl_shift("l")),
         EditableBinding::new(
             "notebookview:reload_file",
-            "Reload file",
+            BindingDescription::fluent("binding-notebooks-file-reload"),
             FileNotebookAction::ReloadFile,
         )
         .with_context_predicate(id!("FileNotebookView")),
@@ -809,7 +810,7 @@ impl View for FileNotebookView {
 
     fn accessibility_contents(&self, _ctx: &AppContext) -> Option<AccessibilityContent> {
         Some(AccessibilityContent::new_without_help(
-            format!("{} notebook", self.title()),
+            warp_i18n::t!("a11y-notebook-suffix", title = self.title()).to_string(),
             WarpA11yRole::TextRole,
         ))
     }

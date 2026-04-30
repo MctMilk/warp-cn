@@ -380,7 +380,7 @@ impl CreateApiKeyModal {
         };
 
         let info = Text::new(
-            "This secret key is shown only once. Copy and store it securely.",
+            warp_i18n::t!("settings-platform-api-key-secret-info"),
             appearance.ui_font_family(),
             LABEL_FONT_SIZE,
         )
@@ -518,9 +518,13 @@ impl View for CreateApiKeyModal {
                 .with_color(theme.nonactive_ui_text_color().into())
                 .finish();
 
-                let name_label = Text::new("Name", appearance.ui_font_family(), LABEL_FONT_SIZE)
-                    .with_color(theme.active_ui_text_color().into())
-                    .finish();
+                let name_label = Text::new(
+                    warp_i18n::t!("settings-platform-api-key-name-label"),
+                    appearance.ui_font_family(),
+                    LABEL_FONT_SIZE,
+                )
+                .with_color(theme.active_ui_text_color().into())
+                .finish();
 
                 let is_pending = self.request_state == RequestState::Pending;
 
@@ -578,10 +582,13 @@ impl View for CreateApiKeyModal {
 
                 // Show segmented control only if user has a team
                 if self.has_team {
-                    let type_label =
-                        Text::new("Type", appearance.ui_font_family(), LABEL_FONT_SIZE)
-                            .with_color(theme.active_ui_text_color().into())
-                            .finish();
+                    let type_label = Text::new(
+                        warp_i18n::t!("settings-platform-api-key-type-label"),
+                        appearance.ui_font_family(),
+                        LABEL_FONT_SIZE,
+                    )
+                    .with_color(theme.active_ui_text_color().into())
+                    .finish();
                     col.add_child(Container::new(type_label).with_margin_bottom(4.).finish());
                     col.add_child(
                         Container::new(ChildView::new(&self.api_key_type_control).finish())
@@ -609,10 +616,13 @@ impl View for CreateApiKeyModal {
                     .finish(),
                 );
 
-                let expiration_label =
-                    Text::new("Expiration", appearance.ui_font_family(), LABEL_FONT_SIZE)
-                        .with_color(theme.active_ui_text_color().into())
-                        .finish();
+                let expiration_label = Text::new(
+                    warp_i18n::t!("settings-platform-api-key-expiration-label"),
+                    appearance.ui_font_family(),
+                    LABEL_FONT_SIZE,
+                )
+                .with_color(theme.active_ui_text_color().into())
+                .finish();
 
                 col.add_child(
                     Container::new(expiration_label)

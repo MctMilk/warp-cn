@@ -192,7 +192,7 @@ pub fn get_user_facing_error_message(e: UserFacingError) -> String {
         UserFacingErrorInterface::BudgetExceededError(e) => e.message,
         UserFacingErrorInterface::PaymentMethodDeclinedError(e) => e.message,
         UserFacingErrorInterface::InvalidAttachmentError(e) => e.message,
-        UserFacingErrorInterface::Unknown(fallback) => fallback.message,
+        UserFacingErrorInterface::Unknown(fallback) => fallback.message.into_string(),
     }
 }
 

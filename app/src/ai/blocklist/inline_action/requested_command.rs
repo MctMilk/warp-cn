@@ -8,6 +8,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 use warp_core::ui::appearance::Appearance;
+use warp_i18n::t;
 use warp_core::ui::Icon;
 use warp_editor::render::element::VerticalExpansionBehavior;
 use warpui::elements::{ConstrainedBox, ScrollbarWidth};
@@ -18,7 +19,7 @@ use warpui::{
         Flex, MainAxisSize, MouseStateHandle, OffsetPositioning, ParentElement, Radius,
         SelectableArea, SelectionHandle, Stack, Text,
     },
-    keymap::{Context, EditableBinding, FixedBinding, Keystroke},
+    keymap::{BindingDescription, Context, EditableBinding, FixedBinding, Keystroke},
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, UpdateView, View,
     ViewContext, ViewHandle,
 };
@@ -61,7 +62,7 @@ use crate::menu::{Event as MenuEvent, Menu, MenuItemFields, MenuVariant};
 use crate::terminal::block_list_viewport::InputMode;
 use crate::terminal::model::block::Block;
 use crate::terminal::TerminalModel;
-use crate::util::bindings::keybinding_name_to_keystroke;
+use crate::util::bindings::{keybinding_name_to_keystroke, BindingDescriptionFluentExt};
 use crate::view_components::action_button::{ButtonSize, KeystrokeSource, NakedTheme};
 use crate::view_components::compactible_action_button::{
     CompactibleActionButton, RenderCompactibleActionButton, LARGE_SIZE_SWITCH_THRESHOLD,
@@ -157,7 +158,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         EDIT_COMMAND_ACTION_NAME,
-        "Edit requested command",
+        BindingDescription::fluent("binding-requested-command-edit"),
         RequestedCommandViewAction::OpenEditMode,
     )
     .with_key_binding(cmd_or_ctrl_shift("e"))
@@ -766,7 +767,7 @@ impl RequestedCommandView {
                 )
                 .with_child(
                     Text::new(
-                        "Your profile is set to always ask for permission to execute commands.",
+                        t!("ai-ui-permission-always-ask"),
                         appearance.ui_font_family(),
                         font_size,
                     )

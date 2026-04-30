@@ -14,7 +14,7 @@ use warpui::elements::{
     Stack, Text,
 };
 use warpui::fonts::Properties;
-use warpui::keymap::{EditableBinding, FixedBinding};
+use warpui::keymap::{BindingDescription, EditableBinding, FixedBinding};
 use warpui::platform::Cursor;
 use warpui::presenter::ChildView;
 use warpui::r#async::Timer;
@@ -40,7 +40,7 @@ use crate::workspaces::user_workspaces::UserWorkspaces;
 use crate::ui_components::buttons::icon_button;
 use crate::workspace::{ActiveSession, TAB_BAR_HEIGHT};
 
-use crate::util::bindings::{cmd_or_ctrl_shift, CustomAction};
+use crate::util::bindings::{cmd_or_ctrl_shift, BindingDescriptionFluentExt, CustomAction};
 use warpui::elements::MouseStateHandle;
 use warpui::elements::ParentElement;
 use warpui::elements::Resizable;
@@ -151,28 +151,28 @@ pub fn init(app: &mut AppContext) {
     app.register_fixed_bindings([FixedBinding::custom(
         CustomAction::CloseCurrentSession,
         AIAssistantAction::ClosePanel,
-        "Close Warp AI",
+        BindingDescription::fluent("binding-ai-assistant-close-warp-ai"),
         id!("AIAssistantPanel"),
     )]);
 
     app.register_editable_bindings([
         EditableBinding::new(
             "ai_assistant_panel:focus_terminal_input",
-            "Focus Terminal Input From Warp AI",
+            BindingDescription::fluent("binding-ai-assistant-focus-terminal-input"),
             AIAssistantAction::FocusTerminalInput,
         )
         .with_context_predicate(id!("AIAssistantPanel"))
         .with_key_binding(cmd_or_ctrl_shift("l")),
         EditableBinding::new(
             "ai_assistant_panel:reset_context",
-            "Restart Warp AI",
+            BindingDescription::fluent("binding-ai-assistant-restart-warp-ai"),
             AIAssistantAction::ResetContext,
         )
         .with_context_predicate(id!("AIAssistantPanel"))
         .with_key_binding("ctrl-l"),
         EditableBinding::new(
             "ai_assistant_panel:reset_context",
-            "Restart Warp AI",
+            BindingDescription::fluent("binding-ai-assistant-restart-warp-ai"),
             AIAssistantAction::ResetContext,
         )
         .with_context_predicate(id!("AIAssistantPanel"))

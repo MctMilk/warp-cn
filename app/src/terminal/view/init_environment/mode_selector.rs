@@ -13,6 +13,7 @@ use warpui::fonts::{Properties, Weight};
 use warpui::keymap::{FixedBinding, Keystroke};
 use warpui::platform::Cursor;
 use warpui::ui_components::components::{Coords, UiComponent, UiComponentStyles};
+use warp_i18n::t;
 use warpui::{AppContext, Entity, SingletonEntity, TypedActionView, View, ViewContext};
 
 // Figma node 6583:23542
@@ -128,7 +129,7 @@ impl EnvironmentSetupModeSelector {
         let theme = appearance.theme();
 
         let title = Text::new(
-            "Choose how you'd like to set up your environment".to_string(),
+            t!("terminal-init-env-mode-prompt"),
             appearance.ui_font_family(),
             TITLE_FONT_SIZE,
         )
@@ -262,7 +263,7 @@ impl EnvironmentSetupModeSelector {
 
             if is_suggested {
                 let suggested_text =
-                    Text::new("Suggested".to_string(), font_family, OPTION_DESC_FONT_SIZE)
+                    Text::new(t!("terminal-init-env-suggested"), font_family, OPTION_DESC_FONT_SIZE)
                         .with_style(Properties::default().weight(Weight::Medium))
                         .with_color(badge_text_color)
                         .finish();

@@ -117,6 +117,7 @@ use warp_core::channel::ChannelState;
 use warp_editor::content::{
     edit::resolve_asset_source_relative_to_directory, mermaid_diagram::mermaid_asset_source,
 };
+use warp_i18n::t;
 use warp_util::path::to_relative_path;
 use warpui::elements::shimmering_text::ShimmeringTextStateHandle;
 use warpui::elements::{Highlight, HighlightedRange};
@@ -951,7 +952,7 @@ fn render_force_refresh_inline(
         // Mirror `render_output_status_text` exactly: same `Text` configuration plus
         // the `Container::with_margin_top(1.)` wrapper so this sits on the same
         // baseline as the adjacent `Last seen by agent ...` text.
-        let text = Text::new(" · Check now".to_string(), font_family, font_size)
+        let text = Text::new(t!("ai-ui-check-now-suffix"), font_family, font_size)
             .with_color(color)
             .with_style(Properties::default())
             .with_clip(ClipConfig::end())
@@ -3074,7 +3075,7 @@ fn render_invalid_api_key_error(
     .finish();
 
     let alert_text = Text::new(
-        "Provided API key is not valid",
+        t!("ai-ui-invalid-api-key"),
         appearance.ui_font_family(),
         14.,
     )

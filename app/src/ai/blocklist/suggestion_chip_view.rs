@@ -18,6 +18,7 @@ use pathfinder_color::ColorU;
 use warp_core::send_telemetry_from_ctx;
 use warp_core::ui::appearance::Appearance;
 use warp_core::ui::theme::Fill;
+use warp_i18n::t;
 use warpui::{
     elements::{Align, ChildView, Container, ParentElement, SavePosition, Stack},
     AppContext, Element, Entity, SingletonEntity, TypedActionView, View, ViewContext, ViewHandle,
@@ -148,7 +149,8 @@ impl Suggestion {
     pub fn tooltip(&self) -> String {
         match self {
             Suggestion::Rule { rule, .. } => {
-                format!("Add rule: {}", rule.content.clone())
+                let content = rule.content.clone();
+                t!("ai-ui-tooltip-add-rule", content = content)
             }
             Suggestion::AgentModeWorkflow { workflow, .. } => {
                 let prompt = if workflow.prompt.chars().count() > MAX_PROMPT_TOOLTIP_LENGTH {
@@ -161,7 +163,7 @@ impl Suggestion {
                 } else {
                     workflow.prompt.clone()
                 };
-                format!("Suggested prompt:\n{prompt}")
+                t!("ai-ui-tooltip-suggested-prompt", prompt = prompt)
             }
         }
     }

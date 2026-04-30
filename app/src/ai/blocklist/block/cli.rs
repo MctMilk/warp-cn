@@ -36,13 +36,14 @@ use warpui::{
         Shrinkable, Stack, Text,
     },
     fonts::{Properties, Style},
-    keymap::{EditableBinding, Keystroke},
+    keymap::{BindingDescription, EditableBinding, Keystroke},
     r#async::SpawnedFutureHandle,
     AppContext, Element, Entity, EntityId, ModelHandle, SingletonEntity, TypedActionView, View,
     ViewContext, ViewHandle,
 };
 
 use crate::ai::agent::{AIAgentPtyWriteMode, CancellationReason};
+use crate::util::bindings::BindingDescriptionFluentExt;
 use crate::ai::blocklist::block::view_impl::common::{
     render_query_text, UserQueryProps, BLOCKED_ACTION_MESSAGE_FOR_GREP_OR_FILE_GLOB,
     BLOCKED_ACTION_MESSAGE_FOR_READING_FILES, BLOCKED_ACTION_MESSAGE_FOR_SEARCHING_CODEBASE,
@@ -177,7 +178,7 @@ pub fn init(app: &mut AppContext) {
     ]);
     app.register_editable_bindings([EditableBinding::new(
         SET_INPUT_MODE_TERMINAL_ACTION_NAME,
-        "Take control of running command",
+        BindingDescription::fluent("binding-cli-take-control-of-running-command"),
         CLISubagentAction::TakeControlOfRunningCommand,
     )
     .with_mac_key_binding("cmd-i")

@@ -3,6 +3,7 @@ use std::sync::Arc;
 
 use pathfinder_color::ColorU;
 use pathfinder_geometry::vector::vec2f;
+use warp_i18n::t;
 use warpui::elements::{
     Border, ChildAnchor, ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Expanded,
     Flex, Hoverable, MainAxisAlignment, MainAxisSize, MouseStateHandle, OffsetPositioning,
@@ -403,7 +404,7 @@ where
         blended_colors::text_sub(theme, theme.background())
     };
     let label = Text::new(
-        "Automatically create a worktree when opening a new tab",
+        t!("coding-auto-create-worktree"),
         appearance.ui_font_family(),
         12.,
     )
@@ -537,7 +538,7 @@ where
     };
 
     let label = Text::new(
-        "Auto-generate worktree branch name",
+        t!("coding-auto-worktree-branch-name"),
         appearance.ui_font_family(),
         12.,
     )

@@ -163,7 +163,7 @@ pub fn init(app: &mut AppContext) {
         FixedBinding::custom(
             CustomAction::Copy,
             ShareBlockModalAction::CopyLink,
-            "Copy",
+            warp_i18n::t!("terminal-copy"),
             id!(ShareBlockModal::ui_name()),
         ),
         FixedBinding::new(
@@ -796,7 +796,7 @@ impl ShareBlockModal {
     ) -> Box<dyn Element> {
         let text_and_icon = TextAndIcon::new(
             TextAndIconAlignment::TextFirst,
-            "Copy".to_string(),
+            warp_i18n::t!("terminal-copy"),
             Icon::Copy.to_warpui_icon(appearance.theme().active_ui_text_color()),
             MainAxisSize::Max,
             MainAxisAlignment::Center,
@@ -870,7 +870,7 @@ impl ShareBlockModal {
             if link_generated {
                 self.block_title_editor.as_ref(app).buffer_text(app)
             } else {
-                "Share block".to_string()
+                warp_i18n::t!("terminal-share-block")
             },
             appearance.ui_font_family(),
             24.,

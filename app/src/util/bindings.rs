@@ -795,6 +795,32 @@ fn materialize_description(desc: &BindingDescription, ctx: &AppContext) -> Bindi
     }
 }
 
+/// Build a [`BindingDescription`] backed by a Fluent key. The bundle is rendered
+/// eagerly to populate the static fallback (used by read paths that have no
+/// `&AppContext`), and a `dynamic_override` is attached so [`materialized`](BindingDescription::materialized)
+/// re-renders against the active locale (covers post-init locale switches).
+///
+/// Use this for command-palette / keyboard-shortcuts page descriptions registered via
+/// `EditableBinding::new(name, fluent_binding_description("..."), action)`. For migrations,
+/// prefer the [`BindingDescriptionFluentExt::fluent`] entrypoint for `::fluent("...")` syntax.
+pub fn fluent_binding_description(key: &'static str) -> BindingDescription {
+    BindingDescription::new(warp_i18n::render(key, None))
+        .with_dynamic_override(move |_ctx| Some(warp_i18n::render(key, None)))
+}
+
+/// Extension trait providing `BindingDescription::fluent("key")` ergonomics without
+/// touching the upstream `warpui_core` crate.
+pub trait BindingDescriptionFluentExt {
+    /// See [`fluent_binding_description`].
+    fn fluent(key: &'static str) -> BindingDescription;
+}
+
+impl BindingDescriptionFluentExt for BindingDescription {
+    fn fluent(key: &'static str) -> BindingDescription {
+        fluent_binding_description(key)
+    }
+}
+
 /// Possible groups a Binding can be part of. The string representation (produced in
 /// [`BindingGroup::as_str`]) is used as the group identifier within
 /// [`warpui::keymap::FixedBinding`] or [`EditableBinding`].

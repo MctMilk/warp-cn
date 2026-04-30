@@ -996,45 +996,30 @@ impl Keystroke {
     /// Can be used for displaying the key shortcuts in the UI. Use `normalized` when defining an
     /// actual trigger for the action.
     pub fn displayed(&self) -> String {
+        self.display_for_locale(OperatingSystem::get().is_mac())
+    }
+
+    /// Render the keystroke for display, choosing macOS symbols or Win/Linux text per `macos`.
+    /// See design.md D16: modifiers are international conventions and stay in English; only
+    /// the platform determines the symbol vs. text rendering.
+    pub fn display_for_locale(&self, macos: bool) -> String {
         let mut s = Vec::new();
         if self.ctrl {
-            let character = if OperatingSystem::get().is_mac() {
-                "⌃"
-            } else {
-                "Ctrl"
-            };
-            s.push(character.into());
+            s.push(if macos { "⌃" } else { "Ctrl" }.into());
         }
         if self.alt {
-            let character = if OperatingSystem::get().is_mac() {
-                "⌥"
-            } else {
-                "Alt"
-            };
-            s.push(character.into());
+            s.push(if macos { "⌥" } else { "Alt" }.into());
         }
         if self.shift {
-            let character = if OperatingSystem::get().is_mac() {
-                "⇧"
-            } else {
-                "Shift"
-            };
-            s.push(character.into());
+            s.push(if macos { "⇧" } else { "Shift" }.into());
         }
         if self.cmd {
-            let character = if OperatingSystem::get().is_mac() {
-                "⌘"
-            } else {
-                "Logo"
-            };
-            s.push(character.into());
+            s.push(if macos { "⌘" } else { "Win" }.into());
         }
         if self.meta {
             s.push("Meta".into());
         }
 
-        // Always treat the key as uppercase--this matches how operating systems and most
-        // applications display keybindings.
         s.push(match self.key.as_str() {
             "up" => "↑".into(),
             "down" => "↓".into(),
@@ -1044,22 +1029,17 @@ impl Keystroke {
             " " => "Space".into(),
             "enter" => "⏎".into(),
             "backspace" => "⌫".into(),
-            key => {
-                // Capitalize the first letter of the key name
-                key.chars()
-                    .next()
-                    .map(|c| c.to_ascii_uppercase())
-                    .into_iter()
-                    .chain(key.chars().skip(1))
-                    .collect::<String>()
-            }
+            key => key.chars()
+                .next()
+                .map(|c| c.to_ascii_uppercase())
+                .into_iter()
+                .chain(key.chars().skip(1))
+                .collect::<String>(),
         });
 
-        if OperatingSystem::get().is_mac() {
-            // On mac, we want to display compactly as "⌘I"
+        if macos {
             s.join("")
         } else {
-            // On windows and linux, we want to display "Ctrl Shift I" instead of "CtrlShiftI"
             s.join(" ")
         }
     }

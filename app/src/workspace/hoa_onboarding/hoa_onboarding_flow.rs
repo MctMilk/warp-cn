@@ -1,5 +1,7 @@
 use std::path::PathBuf;
 
+use warp_i18n::t;
+
 use markdown_parser::{
     FormattedText, FormattedTextFragment, FormattedTextLine, FormattedTextStyles, Hyperlink,
 };
@@ -458,7 +460,7 @@ impl HoaOnboardingFlow {
 
     fn render_inbox_callout(&self, appearance: &Appearance) -> Box<dyn Element> {
         let title = Text::new(
-            "Meet your new agent inbox",
+            t!("onboarding-meet-agent-inbox"),
             appearance.ui_font_family(),
             16.,
         )

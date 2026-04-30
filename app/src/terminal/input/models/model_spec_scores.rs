@@ -1,5 +1,6 @@
 use pathfinder_color::ColorU;
 use warp_core::ui::theme::color::internal_colors;
+use warp_i18n::t;
 use warpui::elements::{
     Border, ConstrainedBox, Container, CornerRadius, Expanded, Flex, MainAxisAlignment,
     MainAxisSize, ParentElement as _, Percentage, Radius, Rect, Stack, Text,
@@ -193,7 +194,7 @@ fn render_score_row(
                 .with_child(
                     Container::new(
                         Text::new(
-                            "Billed to API".to_string(),
+                            t!("terminal-billed-to-api"),
                             appearance.ui_font_family(),
                             14.,
                         )

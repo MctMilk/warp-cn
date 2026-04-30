@@ -2,6 +2,7 @@
 //! We fall back to the existing Warpification behavior and display this banner so the user knows why advanced features are unavailable.
 
 use warp_core::ui::theme::color::internal_colors;
+use warp_i18n::t;
 use warpui::{
     elements::{
         ConstrainedBox, Container, CrossAxisAlignment, Flex, Hoverable, MainAxisAlignment,
@@ -70,7 +71,7 @@ impl View for SshRemoteServerFailedBanner {
 
         // Title
         let title = Text::new(
-            "SSH extension couldn't be installed",
+            t!("terminal-ssh-failed-title"),
             appearance.ui_font_family(),
             font_size,
         )
@@ -79,10 +80,7 @@ impl View for SshRemoteServerFailedBanner {
 
         // Description
         let body = Text::new(
-            "The binary could not be written or executed on the remote host. \
-             This may be due to permission restrictions or missing dependencies. \
-             While advanced features like file browsing and code review are currently \
-             disabled, the rest of your Warpified experience is fully available.",
+            t!("terminal-ssh-failed-desc"),
             appearance.ui_font_family(),
             small_font_size,
         )

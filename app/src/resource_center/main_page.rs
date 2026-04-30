@@ -10,6 +10,7 @@ use crate::{
     themes::theme::{Blend, Fill as FillTheme},
 };
 use pathfinder_geometry::vector::vec2f;
+use warp_i18n::t;
 use warpui::{
     elements::{
         Align, ClippedScrollStateHandle, ClippedScrollable, Container, CornerRadius, Element,
@@ -394,7 +395,7 @@ impl ResourceCenterMainView {
                 .with_text_and_icon_label(
                     TextAndIcon::new(
                         TextAndIconAlignment::IconFirst,
-                        "Invite a friend to Warp",
+                        t!("resource-center-invite-friend"),
                         Icon::new(SEND_SVG_PATH, appearance.theme().accent()),
                         MainAxisSize::Max,
                         MainAxisAlignment::Center,
@@ -433,7 +434,7 @@ impl ResourceCenterMainView {
 
                     appearance
                         .ui_builder()
-                        .wrappable_text("Mark all as read", false)
+                        .wrappable_text(t!("resource-center-skip-tips"), false)
                         .with_style(style)
                         .build()
                         .finish()

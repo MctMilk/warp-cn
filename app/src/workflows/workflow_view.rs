@@ -72,7 +72,7 @@ use crate::{
         dialog::{dialog_styles, Dialog},
         icons::Icon,
     },
-    util::bindings::CustomAction,
+    util::bindings::{BindingDescriptionFluentExt, CustomAction},
     view_components::{DismissibleToast, ToastLink, ToastType},
     workflows::{
         workflow::{Argument, Workflow},
@@ -94,7 +94,7 @@ use warpui::{
         Stack,
     },
     fonts::{FamilyId, Weight},
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     platform::Cursor,
     text_layout::TextStyle,
     ui_components::{
@@ -123,7 +123,7 @@ pub fn init(app: &mut AppContext) {
     use warpui::keymap::macros::id;
     app.register_editable_bindings([EditableBinding::new(
         "workflowview:save",
-        "Save workflow",
+        BindingDescription::fluent("binding-workflow-save"),
         WorkflowAction::Save,
     )
     .with_context_predicate(id!("WorkflowView"))
@@ -131,7 +131,7 @@ pub fn init(app: &mut AppContext) {
 
     app.register_editable_bindings([EditableBinding::new(
         "Close Workflow",
-        "Close",
+        BindingDescription::fluent("binding-workflow-close"),
         WorkflowAction::Close,
     )
     .with_custom_action(CustomAction::CloseCurrentSession)

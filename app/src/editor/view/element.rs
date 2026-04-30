@@ -9,6 +9,7 @@ use super::{
 };
 use super::{position_id_for_cursor, LocalDrawableSelectionData, ReplicaId};
 use crate::appearance::Appearance;
+use warp_i18n::t;
 use crate::editor::accept_autosuggestion_keybinding_view::{
     AcceptAutosuggestionKeybinding, AUTOSUGGESTION_HINT_MINIMUM_HEIGHT,
 };
@@ -1519,7 +1520,7 @@ impl EditorElement {
                 .with_margin_right(self.view_snapshot.em_width)
                 .finish(),
                 Text::new(
-                    "Cycle suggestions",
+                    t!("misc-cycle-suggestions"),
                     self.view_snapshot.font_family,
                     font_size,
                 )

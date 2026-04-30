@@ -18,6 +18,7 @@
 //! deregistered) is the parent's responsibility.
 use settings::Setting;
 use warp_core::ui::theme::color::internal_colors;
+use warp_i18n::t;
 use warpui::{
     elements::{
         Border, ChildView, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
@@ -156,7 +157,7 @@ impl SshRemoteServerChoiceView {
 
         let checkbox_label =
             Hoverable::new(self.do_not_ask_again_label_mouse_state.clone(), move |_| {
-                Text::new("Don't ask me this again", ui_font_family, footer_font_size)
+                Text::new(t!("terminal-ssh-dont-ask-again"), ui_font_family, footer_font_size)
                     .with_color(muted_color)
                     .finish()
             })

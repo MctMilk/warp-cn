@@ -123,7 +123,7 @@ impl ProjectSlide {
     fn render_header(&self, appearance: &Appearance) -> Box<dyn Element> {
         let title = appearance
             .ui_builder()
-            .paragraph("Open a project")
+            .paragraph(warp_i18n::t!("onboarding-project-title"))
             .with_style(UiComponentStyles {
                 font_size: Some(36.),
                 font_weight: Some(Weight::Medium),
@@ -134,7 +134,7 @@ impl ProjectSlide {
 
         let subtitle = appearance
             .ui_builder()
-            .paragraph("Set up a project to optimize it for coding in Warp.")
+            .paragraph(warp_i18n::t!("onboarding-project-subtitle"))
             .with_style(UiComponentStyles {
                 font_size: Some(20.),
                 font_weight: Some(Weight::Normal),
@@ -212,7 +212,7 @@ impl ProjectSlide {
                 let folder_text = Container::new(
                     appearance
                         .ui_builder()
-                        .paragraph("Open local folder")
+                        .paragraph(warp_i18n::t!("onboarding-project-open-folder"))
                         .with_style(UiComponentStyles {
                             font_color: Some(text_color),
                             ..Default::default()
@@ -279,7 +279,7 @@ impl ProjectSlide {
         let back_button = self.back_button.render(
             appearance,
             button::Params {
-                content: button::Content::Label("Back".into()),
+                content: button::Content::Label(warp_i18n::t!("onboarding-nav-back").into()),
                 theme: &button::themes::Naked,
                 options: button::Options {
                     on_click: Some(Box::new(|ctx, _app, _pos| {
@@ -296,15 +296,15 @@ impl ProjectSlide {
         let (label, keystroke, action) = match settings {
             ProjectOnboardingSettings::Project { .. } => (
                 if theme_picker_last {
-                    "Next"
+                    warp_i18n::t!("onboarding-nav-next")
                 } else {
-                    "Get Warping"
+                    warp_i18n::t!("onboarding-nav-get-warping")
                 },
                 Keystroke::parse("enter").unwrap_or_default(),
                 ProjectSlideAction::NextClicked,
             ),
             ProjectOnboardingSettings::NoProject => (
-                "Skip",
+                warp_i18n::t!("onboarding-project-skip"),
                 Keystroke::parse("cmdorctrl-enter").unwrap_or_default(),
                 ProjectSlideAction::SkipClicked,
             ),
@@ -342,8 +342,8 @@ impl ProjectSlide {
         appearance: &Appearance,
         mouse_state: MouseStateHandle,
         checked: bool,
-        title: &'static str,
-        description: &'static str,
+        title: String,
+        description: String,
         action: ProjectSlideAction,
     ) -> Box<dyn Element> {
         let theme = appearance.theme();
@@ -407,8 +407,8 @@ impl ProjectSlide {
             appearance,
             self.initialize_projects_automatically_mouse_state.clone(),
             initialize_projects_automatically,
-            "Initialize project automatically",
-            "Prepares the project environment, builds an index of your code, and generates project rules—giving the agent deeper understanding and better performance.",
+            warp_i18n::t!("onboarding-project-init-title"),
+            warp_i18n::t!("onboarding-project-init-desc"),
             ProjectSlideAction::ToggleInitializeProjectsAutomatically,
         );
 

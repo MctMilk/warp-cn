@@ -883,7 +883,7 @@ impl CommentListView {
                     ButtonVariant::Text,
                     self.view_state.cancel_button_mouse_state.clone(),
                 )
-                .with_text_label("Cancel".to_string())
+                .with_text_label(warp_i18n::t!("code-review-comment-list-cancel"))
                 .build()
                 .finish(),
         )
@@ -910,22 +910,25 @@ impl CommentListView {
     ) -> Cow<'static, str> {
         if let ReviewDestination::Cli(agent) = destination {
             if !has_sendable_comments {
-                Cow::Borrowed("No non-outdated comments to send")
+                Cow::Owned(warp_i18n::t!("code-review-comment-list-no-non-outdated"))
             } else {
                 let cmd = agent.command_prefix();
                 let label = if cmd.is_empty() { "CLI agent" } else { cmd };
-                Cow::Owned(format!("Send diff comments to {label}"))
+                Cow::Owned(warp_i18n::t!(
+                    "code-review-comment-list-send-to-cli-tooltip",
+                    label = label.to_string()
+                ))
             }
         } else if !ai_enabled {
-            Cow::Borrowed("AI must be enabled to send comments to Agent")
+            Cow::Owned(warp_i18n::t!("code-review-comment-list-ai-disabled"))
         } else if !ai_available {
-            Cow::Borrowed("Agent code review requires AI credits")
+            Cow::Owned(warp_i18n::t!("code-review-comment-list-ai-credits-required"))
         } else if matches!(destination, ReviewDestination::None) {
-            Cow::Borrowed("All terminals are busy")
+            Cow::Owned(warp_i18n::t!("code-review-comment-list-all-terminals-busy"))
         } else if !has_sendable_comments {
-            Cow::Borrowed("No non-outdated comments to send")
+            Cow::Owned(warp_i18n::t!("code-review-comment-list-no-non-outdated"))
         } else {
-            Cow::Borrowed("Send diff comments to Agent")
+            Cow::Owned(warp_i18n::t!("code-review-comment-list-send-to-agent-tooltip"))
         }
     }
 
@@ -960,7 +963,7 @@ impl CommentListView {
                 ButtonVariant::Accent,
                 self.view_state.submit_button_mouse_state.clone(),
             )
-            .with_text_label("Send to Agent".to_string())
+            .with_text_label(warp_i18n::t!("code-review-comment-list-send-to-agent-button"))
             .with_tooltip(|| tooltip)
             .with_tooltip_position(ButtonTooltipPosition::AboveLeft);
 
@@ -1069,7 +1072,7 @@ impl CommentListView {
         html_url: Option<&str>,
         appearance: &Appearance,
     ) -> Vec<MenuItem<CommentListAction>> {
-        let mut items = vec![MenuItemFields::new("Copy text")
+        let mut items = vec![MenuItemFields::new(warp_i18n::t!("code-review-comment-list-menu-copy-text"))
             .with_icon(Icon::Copy)
             .with_on_select_action(CommentListAction::CopyCommentText)
             .into_item()];
@@ -1089,7 +1092,7 @@ impl CommentListView {
 
         if let Some(url) = html_url {
             items.push(
-                MenuItemFields::new("View in GitHub")
+                MenuItemFields::new(warp_i18n::t!("code-review-comment-list-menu-view-in-github"))
                     .with_icon(Icon::Github)
                     .with_on_select_action(CommentListAction::ViewInGitHub {
                         url: url.to_string(),
@@ -1099,7 +1102,7 @@ impl CommentListView {
         }
 
         items.push(
-            MenuItemFields::new("Remove")
+            MenuItemFields::new(warp_i18n::t!("code-review-comment-list-menu-remove"))
                 .with_icon(Icon::Trash)
                 .with_override_text_color(Fill::Solid(appearance.theme().ansi_fg_red()))
                 .with_override_icon_color(Fill::Solid(appearance.theme().ansi_fg_red()))

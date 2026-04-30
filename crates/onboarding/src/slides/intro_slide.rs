@@ -78,7 +78,7 @@ impl View for IntroSlide {
         let login_row = Flex::row()
             .with_child(
                 ui_builder
-                    .span("Already have an account? ")
+                    .span(format!("{} ", warp_i18n::t!("onboarding-intro-already-have-account")))
                     .with_style(disclaimer_styles)
                     .build()
                     .finish(),
@@ -86,7 +86,7 @@ impl View for IntroSlide {
             .with_child(
                 ui_builder
                     .link(
-                        "Log in".into(),
+                        warp_i18n::t!("onboarding-intro-log-in").into(),
                         None,
                         Some(Box::new(|ctx| {
                             ctx.dispatch_typed_action(IntroSlideAction::LoginClicked);
@@ -147,7 +147,7 @@ impl IntroSlide {
         let base_color: ColorU = internal_colors::fg_overlay_4(theme).into();
         let shimmer_color: ColorU = theme.foreground().into();
         let title = ShimmeringTextElement::new(
-            "Welcome to Warp",
+            warp_i18n::t!("onboarding-intro-welcome"),
             appearance.ui_font_family(),
             32.,
             base_color,
@@ -159,7 +159,7 @@ impl IntroSlide {
 
         let subtitle_color = internal_colors::text_sub(theme, theme.background().into_solid());
         let subtitle = FormattedTextElement::from_str(
-            "A modern terminal with state of the art agents built in.",
+            warp_i18n::t!("onboarding-intro-subtitle"),
             appearance.ui_font_family(),
             16.,
         )
@@ -172,7 +172,7 @@ impl IntroSlide {
         let get_started_button = self.get_started_button.render(
             appearance,
             button::Params {
-                content: button::Content::Label("Get started".into()),
+                content: button::Content::Label(warp_i18n::t!("onboarding-intro-get-started").into()),
                 theme: &button::themes::Primary,
                 options: button::Options {
                     keystroke: Some(enter),

@@ -32,3 +32,6 @@ warpui_core.workspace = true
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 diesel = { workspace = true, features = ["sqlite", "chrono"] }
+
+[dev-dependencies]
+serde_json.workspace = true

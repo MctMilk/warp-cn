@@ -51,7 +51,7 @@ use warpui::{
     },
     fonts::{Properties, Weight},
     id,
-    keymap::EditableBinding,
+    keymap::{BindingDescription, EditableBinding},
     ui_components::{button::ButtonVariant, components::UiComponent},
     AppContext, Element, Entity, ModelHandle, SingletonEntity, TypedActionView, View, ViewContext,
     ViewHandle, WindowId,
@@ -63,6 +63,7 @@ use crate::{
     search::{files::icon::icon_from_file_path, ItemHighlightState},
     tab::TAB_BAR_BORDER_HEIGHT,
     ui_components::{blended_colors, buttons::icon_button},
+    util::bindings::BindingDescriptionFluentExt,
     view_components::{DismissibleToast, MarkdownToggleEvent, MarkdownToggleView},
     workspace::{ActiveSession, ToastStack, WorkspaceAction},
 };
@@ -92,7 +93,12 @@ const TAB_PADDING: f32 = 2.;
 
 // Keybinding constants - exported so AI document view can reuse
 pub const SAVE_FILE_BINDING_NAME: &str = "code_view:save";
-pub const SAVE_FILE_BINDING_DESCRIPTION: &str = "Save file";
+/// Returns the localized "Save file" binding description.
+/// Used by both `code/view.rs` and `ai/ai_document_view.rs` so the same
+/// fluent-backed description appears in command palette / keyboard shortcuts.
+pub fn save_file_binding_description() -> BindingDescription {
+    BindingDescription::fluent("binding-code-view-save-file")
+}
 
 pub fn init(app: &mut AppContext) {
     super::editor::view::init(app);
@@ -102,28 +108,28 @@ pub fn init(app: &mut AppContext) {
     app.register_editable_bindings([
         EditableBinding::new(
             SAVE_FILE_BINDING_NAME,
-            SAVE_FILE_BINDING_DESCRIPTION,
+            save_file_binding_description(),
             CodeViewAction::SaveFile,
         )
         .with_context_predicate(text_entry.clone())
         .with_key_binding("cmdorctrl-s"),
         EditableBinding::new(
             "code_view:save_as",
-            "Save file as",
+            BindingDescription::fluent("binding-code-view-save-file-as"),
             CodeViewAction::SaveFileAs,
         )
         .with_context_predicate(text_entry.clone())
         .with_key_binding("cmdorctrl-shift-S"),
         EditableBinding::new(
             "code_view:close_all_tabs",
-            "Close all tabs",
+            BindingDescription::fluent("binding-code-view-close-all-tabs"),
             CodeViewAction::CloseAll,
         )
         .with_context_predicate(id!("CodeEditorView"))
         .with_key_binding("cmdorctrl-r w"),
         EditableBinding::new(
             "code_view:close_saved_tabs",
-            "Close saved tabs",
+            BindingDescription::fluent("binding-code-view-close-saved-tabs"),
             CodeViewAction::CloseSaved,
         )
         .with_context_predicate(id!("CodeEditorView"))

@@ -540,24 +540,28 @@ impl TypedActionView for FindBar {
         action: &Self::Action,
         ctx: &mut ViewContext<Self>,
     ) -> ActionAccessibilityContent {
-        let text = match action {
+        let text: String = match action {
             FindBarAction::ToggleRegex => {
                 if self.searcher.as_ref(ctx).is_regex() {
-                    "Enable regex search"
+                    warp_i18n::t!("a11y-notebook-find-bar-enable-regex").to_string()
                 } else {
-                    "Disable regex search"
+                    warp_i18n::t!("a11y-notebook-find-bar-disable-regex").to_string()
                 }
             }
             FindBarAction::ToggleCaseSensitive => {
                 if self.searcher.as_ref(ctx).is_case_sensitive() {
-                    "Enable case-sensitive search"
+                    warp_i18n::t!("a11y-notebook-find-bar-enable-case-sensitive").to_string()
                 } else {
-                    "Disable case-sensitive search"
+                    warp_i18n::t!("a11y-notebook-find-bar-disable-case-sensitive").to_string()
                 }
             }
-            FindBarAction::FocusNextMatch => "Focus next match",
-            FindBarAction::FocusPreviousMatch => "Focus previous match",
-            FindBarAction::Close => "Close find bar",
+            FindBarAction::FocusNextMatch => {
+                warp_i18n::t!("a11y-notebook-find-bar-focus-next").to_string()
+            }
+            FindBarAction::FocusPreviousMatch => {
+                warp_i18n::t!("a11y-notebook-find-bar-focus-previous").to_string()
+            }
+            FindBarAction::Close => warp_i18n::t!("a11y-notebook-find-bar-close").to_string(),
         };
         Some(AccessibilityContent::new_without_help(
             text,
