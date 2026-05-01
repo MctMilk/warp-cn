@@ -310,7 +310,7 @@ fn render_context_window_row(
     let max = cw.max;
 
     let label = Text::new(
-        "Context window".to_string(),
+        t!("ai-ui-context-window-label"),
         appearance.ui_font_family(),
         13.,
     )
@@ -319,7 +319,7 @@ fn render_context_window_row(
     let min_label_text = min.to_string();
     let max_label_text = max.to_string();
     let desc = Text::new(
-        "The base model's working memory — how many tokens of your conversation, code, and documents it can consider at once. Larger windows enable longer conversations and more coherent responses over bigger codebases, at the cost of higher latency and compute usage.".to_string(),
+        t!("ai-ui-context-window-desc"),
         appearance.ui_font_family(),
         11.,
     )
