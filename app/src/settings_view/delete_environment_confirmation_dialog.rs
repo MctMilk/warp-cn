@@ -94,7 +94,7 @@ impl View for DeleteEnvironmentConfirmationDialog {
 
         let description = warp_i18n::t!(
             "settings-environments-delete-dialog-description",
-            name = self.env_name.as_str()
+            name = &self.env_name
         )
         .to_string();
 

@@ -466,7 +466,7 @@ impl EmailValidationError {
         match self {
             EmailValidationError::Empty => warp_i18n::t!("settings-referrals-email-empty-error"),
             EmailValidationError::Invalid(invalid_email) => {
-                warp_i18n::t!("settings-referrals-email-invalid-error", email = invalid_email.as_str())
+                warp_i18n::t!("settings-referrals-email-invalid-error", email = invalid_email)
             }
         }
     }

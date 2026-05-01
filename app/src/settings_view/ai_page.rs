@@ -3550,7 +3550,7 @@ impl SettingsWidget for UsageWidget {
                 .with_child(
                     appearance
                         .ui_builder()
-                        .paragraph(warp_i18n::t!("settings-ai-resets-after", time = formatted_next_refresh_time.as_str()))
+                        .paragraph(warp_i18n::t!("settings-ai-resets-after", time = formatted_next_refresh_time))
                         .with_style(UiComponentStyles {
                             font_color: Some(blended_colors::text_sub(
                                 appearance.theme(),

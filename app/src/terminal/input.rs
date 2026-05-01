@@ -7176,7 +7176,7 @@ impl Input {
                 self.try_execute_command(&command, ctx);
 
                 ctx.emit_a11y_content(AccessibilityContent::new_without_help(
-                    warp_i18n::t!("a11y-input-executed-command", command = command.as_str())
+                    warp_i18n::t!("a11y-input-executed-command", command = command)
                         .to_string(),
                     WarpA11yRole::UserAction,
                 ));

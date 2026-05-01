@@ -3021,7 +3021,7 @@ impl TypedActionView for RichTextEditorView {
             EditorViewAction::Paste | EditorViewAction::MiddleClickPaste => {
                 let pasted = ctx.clipboard().read().plain_text;
                 ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
-                    warp_i18n::t!("a11y-notebook-pasting", text = pasted.as_str()),
+                    warp_i18n::t!("a11y-notebook-pasting", text = pasted),
                     WarpA11yRole::UserAction,
                 ))
             }
@@ -3055,7 +3055,7 @@ impl TypedActionView for RichTextEditorView {
             EditorViewAction::OpenTooltipLink(link) => {
                 let url_str = (**link).to_string();
                 ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
-                    warp_i18n::t!("a11y-notebook-open-link", url = url_str.as_str()),
+                    warp_i18n::t!("a11y-notebook-open-link", url = url_str),
                     WarpA11yRole::UserAction,
                 ))
             }
@@ -3065,7 +3065,7 @@ impl TypedActionView for RichTextEditorView {
                         let url_str = (**link).to_string();
                         warp_i18n::t!(
                             "a11y-notebook-secondary-click-link",
-                            url = url_str.as_str()
+                            url = url_str
                         )
                     },
                     |action| action.accessibility_content.into_owned(),
@@ -3190,7 +3190,7 @@ impl TypedActionView for RichTextEditorView {
                 ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
                     warp_i18n::t!(
                         "a11y-notebook-change-code-language",
-                        language = lang_str.as_str()
+                        language = lang_str
                     ),
                     WarpA11yRole::UserAction,
                 ))

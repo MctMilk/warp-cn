@@ -71,6 +71,8 @@ ai-ui-plan-auto-sync = Plan auto-sync
 ai-ui-plan-auto-sync-desc = The plans this agent creates will be automatically added and synced to Warp Drive.
 ai-ui-call-web-tools = Call web tools
 ai-ui-call-web-tools-desc = The agent may use web search when helpful for completing tasks.
+ai-ui-context-window-label = Context window
+ai-ui-context-window-desc = The base model's working memory — how many tokens of your conversation, code, and documents it can consider at once. Larger windows enable longer conversations and more coherent responses over bigger codebases, at the cost of higher latency and compute usage.
 
 # Ambient (cloud) agent UI
 ai-ui-ambient-failed = Failed

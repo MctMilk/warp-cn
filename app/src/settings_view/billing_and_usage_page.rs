@@ -1138,7 +1138,7 @@ impl UsageWidget {
             warp_i18n::t!("settings-billing-one-credit-remaining")
         } else {
             let count = credits_remaining.separate_with_commas();
-            warp_i18n::t!("settings-billing-credits-remaining", count = count.as_str())
+            warp_i18n::t!("settings-billing-credits-remaining", count = count)
         };
         let credits_label = Text::new_inline(credits_text, appearance.ui_font_family(), 12.)
             .with_color(blended_colors::text_sub(theme, theme.surface_1()))
@@ -1859,7 +1859,7 @@ impl UsageWidget {
                     warp_i18n::t!("settings-billing-one-credit")
                 } else {
                     let count = credits_purchased.separate_with_commas();
-                    warp_i18n::t!("settings-billing-n-credits", count = count.as_str())
+                    warp_i18n::t!("settings-billing-n-credits", count = count)
                 };
 
                 let credits_component = Container::new(
@@ -1945,7 +1945,7 @@ impl UsageWidget {
             auto_reload_switch,
             Some(warp_i18n::t!(
                 "settings-billing-auto-reload-description",
-                amount = auto_reload_amount.as_str()
+                amount = auto_reload_amount
             )),
         ))
         .with_padding_right(-TOGGLE_BUTTON_RIGHT_PADDING)
@@ -2190,7 +2190,7 @@ impl UsageWidget {
                 } else {
                     let count_str = count.separate_with_commas();
                     (
-                        warp_i18n::t!("settings-billing-n-credits", count = count_str.as_str()),
+                        warp_i18n::t!("settings-billing-n-credits", count = count_str),
                         format!("${:.2}", cost as f64 / 100.0),
                     )
                 }
@@ -2232,7 +2232,7 @@ impl UsageWidget {
             let formatted_date = local_period_end.format("%b %d at %-I:%M %p").to_string();
             let billing_date_text = warp_i18n::t!(
                 "settings-billing-usage-resets-on",
-                date = formatted_date.as_str()
+                date = formatted_date
             );
             left_side_component.add_child(
                 Container::new(
@@ -2400,7 +2400,7 @@ impl UsageWidget {
             let header = warp_i18n::t!("settings-billing-credits-header");
             let description = warp_i18n::t!(
                 "settings-billing-account-credits-info",
-                duration = refresh_duration.as_str()
+                duration = refresh_duration
             );
 
             let request_usage_description = FormattedTextElement::from_str(

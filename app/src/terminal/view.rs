@@ -13609,7 +13609,7 @@ impl TerminalView {
             let a11y_content = AccessibilityContent::new(
                 warp_i18n::t!(
                     "a11y-terminal-correction-suggested",
-                    command = correction.command.as_str()
+                    command = &correction.command
                 ),
                 warp_i18n::t!("a11y-terminal-correction-help"),
                 WarpA11yRole::HelpRole,
@@ -23203,7 +23203,7 @@ impl TerminalView {
             let status = if block.has_failed() {
                 warp_i18n::t!(
                     "a11y-terminal-block-status-failed",
-                    code = exit_code_str.as_str()
+                    code = exit_code_str
                 )
             } else if block.is_background() {
                 warp_i18n::t!("a11y-terminal-block-status-background")
@@ -23219,9 +23219,9 @@ impl TerminalView {
                     "{}\n",
                     warp_i18n::t!(
                         "a11y-terminal-block-summary",
-                        index = index_str.as_str(),
-                        command = command.as_str(),
-                        status = status.as_str()
+                        index = index_str,
+                        command = command,
+                        status = status
                     )
                 ),
                 // TODO (a11y) Keybindings should be taken from the actual user's
@@ -24264,7 +24264,7 @@ impl TypedActionView for TerminalView {
                     let count_str = self.num_non_hidden_selected_blocks().to_string();
                     let num_selected_text = warp_i18n::t!(
                         "a11y-terminal-selected-blocks",
-                        count = count_str.as_str()
+                        count = count_str
                     );
                     content.value = format!("{}\n{}", num_selected_text, content.value);
                     Custom(content)
@@ -24277,7 +24277,7 @@ impl TypedActionView for TerminalView {
                 Custom(AccessibilityContent::new_without_help(
                     warp_i18n::t!(
                         "a11y-terminal-selected-all-blocks",
-                        count = count_str.as_str()
+                        count = count_str
                     ),
                     WarpA11yRole::TextRole,
                 ))
@@ -24302,8 +24302,8 @@ impl TypedActionView for TerminalView {
                         let output = block.output_to_string();
                         outputs.push(warp_i18n::t!(
                             "a11y-terminal-block-output-entry",
-                            index = index_str.as_str(),
-                            output = output.as_str()
+                            index = index_str,
+                            output = output
                         ));
                     },
                     ctx,
@@ -24311,7 +24311,7 @@ impl TypedActionView for TerminalView {
                 let count_str = outputs.len().to_string();
                 let header = warp_i18n::t!(
                     "a11y-terminal-copied-block-outputs-header",
-                    count = count_str.as_str()
+                    count = count_str
                 );
                 let text = format!("{}\n{}", header, outputs.join("\n"));
                 Custom(AccessibilityContent::new_without_help(
@@ -24328,9 +24328,9 @@ impl TypedActionView for TerminalView {
                         let output = block.output_to_string();
                         blocks.push(warp_i18n::t!(
                             "a11y-terminal-block-copy-entry",
-                            index = index_str.as_str(),
-                            command = command.as_str(),
-                            output = output.as_str()
+                            index = index_str,
+                            command = command,
+                            output = output
                         ));
                     },
                     ctx,
@@ -24338,7 +24338,7 @@ impl TypedActionView for TerminalView {
                 let count_str = blocks.len().to_string();
                 let header = warp_i18n::t!(
                     "a11y-terminal-copied-blocks-header",
-                    count = count_str.as_str()
+                    count = count_str
                 );
                 let text = format!("{}\n{}", header, blocks.join("\n"));
                 Custom(AccessibilityContent::new_without_help(
@@ -24370,7 +24370,7 @@ impl TypedActionView for TerminalView {
                 Custom(AccessibilityContent::new_without_help(
                     warp_i18n::t!(
                         "a11y-terminal-open-block-filter",
-                        index = index_str.as_str()
+                        index = index_str
                     ),
                     WarpA11yRole::TextRole,
                 ))

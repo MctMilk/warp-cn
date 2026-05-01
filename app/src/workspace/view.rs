@@ -19724,7 +19724,7 @@ impl TypedActionView for Workspace {
             WorkspaceAction::SetA11yVerbosityLevel(verbosity) => {
                 let verbosity_str = format!("{verbosity:?}");
                 ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
-                    warp_i18n::t!("a11y-workspace-verbosity-set", verbosity = verbosity_str.as_str())
+                    warp_i18n::t!("a11y-workspace-verbosity-set", verbosity = verbosity_str)
                         .to_string(),
                     WarpA11yRole::UserAction,
                 ))
