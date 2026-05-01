@@ -1,0 +1,125 @@
+name: 构建 Windows 安装包
+
+# warp-cn 中文优化分支 · Windows 构建工作流
+# 构建目标: warp-oss.exe (OSS 通道，无 Sentry)
+# 触发方式: 手动触发 (workflow_dispatch)
+# runner: windows-latest (已预装 MSVC + CMake)
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: '编译 profile (release=rlto 优化版, debug=开发版)'
+        required: false
+        default: release
+        type: choice
+        options:
+          - release
+          - debug
+
+env:
+  WARP_BUILD_CHANNEL: oss
+  TARGET: x86_64-pc-windows-msvc
+
+jobs:
+  build:
+    name: 构建 warp-oss (Windows x64)
+    runs-on: windows-latest
+    timeout-minutes: 240
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 配置 Rust 工具链
+        uses: dtolnay/rust-toolchain@master
+        with:
+          target: ${{ env.TARGET }}
+
+      - name: 安装构建依赖
+        shell: pwsh
+        run: |
+          # protobuf (部分依赖需要)
+          choco install protobuf -y 2>&1 | Select-String -Pattern 'installed|already|ERROR' | Select-Object -First 5
+
+      - name: 缓存 Rust 依赖
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.cargo/git/checkouts/
+            ~/.cargo/.package-cache
+          key: rust-deps-win-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            rust-deps-win-
+
+      - name: 缓存 target 目录
+        uses: actions/cache@v4
+        with:
+          path: target/x86_64-pc-windows-msvc/
+          key: warp-build-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            warp-build-${{ runner.os }}-
+
+      - name: 构建 warp-oss (Windows x64)
+        env:
+          CARGO_TARGET_DIR: ${{ github.workspace }}/target
+          CARGO_PROFILE: ${{ inputs.profile == 'debug' && 'dev' || 'rlto' }}
+        run: |
+          cargo build `
+            -p warp `
+            --bin warp-oss `
+            --features "release_bundle,gui,nld_improvements" `
+            --profile ${{ inputs.profile == 'debug' && 'dev' || 'rlto' }} `
+            --target x86_64-pc-windows-msvc
+
+      - name: 准备打包资源
+        shell: pwsh
+        env:
+          CARGO_PROFILE: ${{ inputs.profile == 'debug' && 'dev' || 'rlto' }}
+        run: |
+          $dist = "${{ github.workspace }}/target/dist"
+          New-Item -ItemType Directory -Force -Path $dist | Out-Null
+
+          # 复制主程序
+          $profileDir = if ("${{ inputs.profile }}" -eq "debug") { "debug" } else { "rlto" }
+          Copy-Item "${{ github.workspace }}/target/x86_64-pc-windows-msvc/$profileDir/warp-oss.exe" -Destination $dist
+
+          # 复制 bundled 资源（skills / metadata）
+          $bundledSrc = "${{ github.workspace }}/resources/bundled"
+          if (Test-Path $bundledSrc) {
+            $bundledDest = "$dist/bundled"
+            Copy-Item -Path $bundledSrc -Destination $bundledDest -Recurse -Force
+          }
+
+          # 复制 Windows 平台资源
+          $winAssets = "${{ github.workspace }}/app/assets/windows/x64"
+          if (Test-Path $winAssets) {
+            Get-ChildItem $winAssets -File | Copy-Item -Destination $dist
+          }
+
+          # 写入版本元信息
+          $metaDir = "$dist/bundled/metadata"
+          New-Item -ItemType Directory -Force -Path $metaDir | Out-Null
+          @{
+            warp_version = "warp-cn-oss-${{ github.run_id }}"
+          } | ConvertTo-Json | Set-Content -Path "$metaDir/version.json" -Encoding utf8
+
+          Write-Host "打包目录:"
+          Get-ChildItem $dist -Recurse | ForEach-Object { Write-Host $_.FullName }
+
+      - name: 打包 ZIP
+        shell: pwsh
+        run: |
+          $zipPath = "${{ github.workspace }}/target/warp-oss-windows-x64.zip"
+          Compress-Archive -Path "${{ github.workspace }}/target/dist/*" -DestinationPath $zipPath -Force
+          Write-Host "ZIP 大小: $((Get-Item $zipPath).Length / 1MB) MB"
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: warp-oss-windows-x64-${{ inputs.profile }}
+          path: ${{ github.workspace }}/target/warp-oss-windows-x64.zip
+          retention-days: 30
