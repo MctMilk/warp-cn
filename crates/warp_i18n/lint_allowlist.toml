@@ -12,7 +12,7 @@
 # order-invariant so insertion order does not affect lint output.
 
 schema_version = 1
-phase5_baseline_count = 4   # Frozen at Phase 5; CI compares against this.
+phase5_baseline_count = 34  # Frozen at Phase 5; CI compares against this.
 
 [[entries]]
 file_glob = "crates/keymap/src/**/*.rs"
@@ -47,3 +47,249 @@ literal = "AWS Access Key ID:"
 reason = "inquire CLI prompt in Agent SDK setup wizard, CLI-style flow"
 added_phase = 4
 owner = "i18n-team"
+
+# === Phase 6: absorb upstream sync (PR #7) ===
+# Upstream-introduced RemoteString flows into pre-existing t!() call sites,
+# plus a few new untranslated literals in upstream's new view code.
+# Tracked by issue #6 / PR #7. Follow-up: refactor each callsite to render
+# server text directly, then remove from this allowlist.
+
+[[entries]]
+file_glob = "app/src/ai/blocklist/agent_view/zero_state_block.rs"
+callsite = "Text::new"
+literal = "RECENT ACTIVITY"
+reason = "upstream sync absorbed; untranslated literal introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/ai/blocklist/agent_view/zero_state_block.rs"
+callsite = "Text::new"
+literal = "Run your agent task in an isolated cloud environment."
+reason = "upstream sync absorbed; untranslated literal introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/ai/blocklist/agent_view/zero_state_block.rs"
+callsite = "Text::new"
+literal = "View changelog"
+reason = "upstream sync absorbed; untranslated literal introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/ai/execution_profiles/editor/ui_helpers.rs"
+callsite = "Text::new"
+literal = "Context window"
+reason = "upstream sync absorbed; untranslated literal introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/ai/execution_profiles/editor/ui_helpers.rs"
+callsite = "Text::new"
+literal = "The base model's working memory — how many tokens of your conversation, code, and documents it can consider at once. Larger windows enable longer conversations and more coherent responses over bigger codebases, at the cost of higher latency and compute usage."
+reason = "upstream sync absorbed; untranslated literal introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/notebooks/editor/model.rs"
+callsite = "t!"
+literal = "style=style_name.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/notebooks/editor/view.rs"
+callsite = "t!"
+literal = "language=lang_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/notebooks/editor/view.rs"
+callsite = "t!"
+literal = "text=pasted.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/notebooks/editor/view.rs"
+callsite = "t!"
+literal = "url=url_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/notebooks/file/mod.rs"
+callsite = "t!"
+literal = "title=self.title()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/notebooks/notebook.rs"
+callsite = "t!"
+literal = "title=self.title(ctx)"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/ai_page.rs"
+callsite = "t!"
+literal = "time=formatted_next_refresh_time.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/billing_and_usage_page.rs"
+callsite = "t!"
+literal = "amount=auto_reload_amount.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/billing_and_usage_page.rs"
+callsite = "t!"
+literal = "count=count.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/billing_and_usage_page.rs"
+callsite = "t!"
+literal = "count=count_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/billing_and_usage_page.rs"
+callsite = "t!"
+literal = "date=formatted_date.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/billing_and_usage_page.rs"
+callsite = "t!"
+literal = "duration=refresh_duration.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/delete_environment_confirmation_dialog.rs"
+callsite = "t!"
+literal = "name=self.env_name.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/environments_page.rs"
+callsite = "t!"
+literal = "team=team.name.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/environments_page.rs"
+callsite = "t!"
+literal = "time=time.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/mcp_servers/edit_page.rs"
+callsite = "Text::new"
+literal = "JSON"
+reason = "upstream sync absorbed; untranslated literal introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/settings_view/referrals_page.rs"
+callsite = "t!"
+literal = "email=invalid_email.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/input.rs"
+callsite = "t!"
+literal = "command=command.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/view.rs"
+callsite = "t!"
+literal = "code=exit_code_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/view.rs"
+callsite = "t!"
+literal = "command=command.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/view.rs"
+callsite = "t!"
+literal = "command=correction.command.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/view.rs"
+callsite = "t!"
+literal = "count=count_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/view.rs"
+callsite = "t!"
+literal = "index=index_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/terminal/view.rs"
+callsite = "t!"
+literal = "output=output.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
+
+[[entries]]
+file_glob = "app/src/workspace/view.rs"
+callsite = "t!"
+literal = "verbosity=verbosity_str.as_str()"
+reason = "upstream sync absorbed; RemoteString introduced by upstream merge, see PR #7"
+added_phase = 5
+owner = "upstream-sync"
