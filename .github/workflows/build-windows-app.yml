@@ -31,6 +31,14 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
+
+      - name: 安装 protoc
+        shell: bash
+        run: |
+          mkdir -p $RUNNER_TEMP/protoc
+          curl -sL https://github.com/protocolbuffers/protobuf/releases/download/v25.1/protoc-25.1-win64.zip -o $RUNNER_TEMP/protoc.zip
+          unzip -q $RUNNER_TEMP/protoc.zip -d $RUNNER_TEMP/protoc
+          echo "$RUNNER_TEMP/protoc/bin" >> $GITHUB_PATH
       - name: 配置 Rust 工具链
         uses: dtolnay/rust-toolchain@master
         with:
