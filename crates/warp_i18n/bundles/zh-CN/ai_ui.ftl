@@ -71,6 +71,8 @@ ai-ui-plan-auto-sync = 计划自动同步
 ai-ui-plan-auto-sync-desc = 该智能体创建的计划将自动添加并同步至 Warp 云盘。
 ai-ui-call-web-tools = 调用网页工具
 ai-ui-call-web-tools-desc = 该智能体在完成任务有需要时，可使用网页搜索。
+ai-ui-context-window-label = 上下文窗口
+ai-ui-context-window-desc = 基础模型的工作记忆 —— 一次能考虑多少 token 的对话、代码与文档。窗口越大，对话越长、跨更大代码库的回复越连贯，但代价是延迟与算力消耗更高。
 
 # 云端（ambient）智能体 UI
 ai-ui-ambient-failed = 失败
