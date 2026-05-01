@@ -809,8 +809,9 @@ impl View for FileNotebookView {
     }
 
     fn accessibility_contents(&self, _ctx: &AppContext) -> Option<AccessibilityContent> {
+        let notebook_title = self.title();
         Some(AccessibilityContent::new_without_help(
-            warp_i18n::t!("a11y-notebook-suffix", title = self.title()).to_string(),
+            warp_i18n::t!("a11y-notebook-suffix", title = notebook_title).to_string(),
             WarpA11yRole::TextRole,
         ))
     }

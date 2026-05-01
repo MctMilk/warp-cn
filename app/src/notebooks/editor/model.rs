@@ -1645,9 +1645,9 @@ impl NotebooksEditorModel {
     pub fn style_toggle_a11y(&self, style: BufferTextStyle) -> ActionAccessibilityContent {
         let style_name = format!("{style:?}");
         let text = if self.is_style_active(style) {
-            warp_i18n::t!("a11y-notebook-style-toggle-off", style = style_name.as_str()).to_string()
+            warp_i18n::t!("a11y-notebook-style-toggle-off", style = style_name).to_string()
         } else {
-            warp_i18n::t!("a11y-notebook-style-toggle-on", style = style_name.as_str()).to_string()
+            warp_i18n::t!("a11y-notebook-style-toggle-on", style = style_name).to_string()
         };
         ActionAccessibilityContent::Custom(AccessibilityContent::new_without_help(
             text,

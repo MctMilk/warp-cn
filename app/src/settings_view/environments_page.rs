@@ -190,7 +190,7 @@ impl EnvironmentDisplayData {
             let time = format_approx_duration_from_now_utc(ts.utc());
             warp_i18n::t!(
                 "settings-environments-card-last-edited",
-                time = time.as_str()
+                time = time
             )
         });
         let last_used_part = match self.last_used_ts {
@@ -198,7 +198,7 @@ impl EnvironmentDisplayData {
                 let time = format_approx_duration_from_now_utc(ts.utc());
                 warp_i18n::t!(
                     "settings-environments-card-last-used",
-                    time = time.as_str()
+                    time = time
                 )
             }
             None => warp_i18n::t!("settings-environments-card-last-used-never"),
@@ -1334,7 +1334,7 @@ impl EnvironmentsPageWidget {
                     .map(|team| {
                         warp_i18n::t!(
                             "settings-environments-section-shared-by-team",
-                            team = team.name.as_str()
+                            team = &team.name
                         )
                     })
                     .unwrap_or_else(|| {
