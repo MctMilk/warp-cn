@@ -1279,6 +1279,7 @@ impl CodeReviewView {
             Menu::new()
                 .prevent_interaction_with_other_elements()
                 .with_drop_shadow()
+                .with_width(140.)
         });
         ctx.subscribe_to_view(&git_operations_menu, |me, _, event, ctx| match event {
             MenuEvent::ItemSelected | MenuEvent::Close { .. } => {
@@ -7803,7 +7804,11 @@ impl BackingView for CodeReviewView {
                 AppContext::show_native_platform_modal(ctx, dialog);
             } else if cfg!(all(
                 not(target_family = "wasm"),
-                any(target_os = "linux", target_os = "windows")
+                any(
+                    target_os = "linux",
+                    target_os = "freebsd",
+                    target_os = "windows"
+                )
             )) {
                 // Find the workspace to show the Warp-native modal
                 if let Some(workspace) = ctx
