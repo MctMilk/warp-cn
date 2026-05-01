@@ -34,6 +34,7 @@ jobs:
       - name: 配置 Rust 工具链
         uses: dtolnay/rust-toolchain@master
         with:
+          toolchain: stable
           target: ${{ env.TARGET }}
 
       - name: 安装构建依赖
