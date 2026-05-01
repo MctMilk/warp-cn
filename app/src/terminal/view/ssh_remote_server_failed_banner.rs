@@ -3,6 +3,7 @@
 
 use warp_core::ui::theme::color::internal_colors;
 use warp_core::ui::theme::AnsiColorIdentifier;
+use warp_i18n::t;
 use warpui::{
     elements::{
         ConstrainedBox, Container, CornerRadius, CrossAxisAlignment, Flex, Hoverable,
@@ -13,10 +14,6 @@ use warpui::{
 };
 
 use crate::{terminal::model::session::SessionId, ui_components::icons::Icon, Appearance};
-
-const BANNER_BODY: &str =
-    "While advanced features like file browsing and code review are currently \
-    disabled, the rest of your Warpified experience is fully available.";
 
 #[derive(Clone, Debug)]
 pub enum SshRemoteServerFailedBannerAction {
@@ -36,23 +33,19 @@ pub enum SshRemoteServerFailureKind {
 }
 
 impl SshRemoteServerFailureKind {
-    fn title(self) -> &'static str {
+    fn title(self) -> String {
         match self {
-            Self::BinaryCheck => "SSH extension couldn't be verified",
-            Self::BinaryInstall => "SSH extension couldn't be installed",
-            Self::Launch => "SSH extension couldn't be started",
+            Self::BinaryCheck => t!("terminal-ssh-failed-banner-title-binary-check"),
+            Self::BinaryInstall => t!("terminal-ssh-failed-banner-title-binary-install"),
+            Self::Launch => t!("terminal-ssh-failed-banner-title-launch"),
         }
     }
 
-    fn description(self) -> &'static str {
+    fn description(self) -> String {
         match self {
-            Self::BinaryCheck => {
-                "The SSH extension binary could not be verified on the remote host."
-            }
-            Self::BinaryInstall => {
-                "The binary could not be written or executed on the remote host."
-            }
-            Self::Launch => "The SSH extension could not be started on the remote host.",
+            Self::BinaryCheck => t!("terminal-ssh-failed-banner-desc-binary-check"),
+            Self::BinaryInstall => t!("terminal-ssh-failed-banner-desc-binary-install"),
+            Self::Launch => t!("terminal-ssh-failed-banner-desc-launch"),
         }
     }
 }
@@ -106,19 +99,18 @@ impl View for SshRemoteServerFailedBanner {
         .with_margin_right(8.)
         .finish();
 
-        // TODO(i18n): re-localize per-kind titles/descriptions, BANNER_BODY suffix,
-        // and the "ERROR:" prefix once the impl block (kind.title(), kind.description())
-        // and BANNER_BODY are migrated to t!() — left untranslated to preserve the
-        // upstream feature richness this fork's earlier i18n pass had simplified away.
         let title = Text::new(self.kind.title(), appearance.ui_font_family(), font_size)
             .with_color(fg_color)
             .finish();
 
-        let body_text = format!("{} {BANNER_BODY}", self.kind.description());
-        let body = Text::new(body_text, appearance.ui_font_family(), small_font_size)
-            .soft_wrap(true)
-            .with_color(muted_color)
-            .finish();
+        let body = Text::new(
+            self.kind.description(),
+            appearance.ui_font_family(),
+            small_font_size,
+        )
+        .soft_wrap(true)
+        .with_color(muted_color)
+        .finish();
 
         // Error detail line wrapped in a red-tinted background container.
         let trimmed_error = self.error.trim();
@@ -130,7 +122,7 @@ impl View for SshRemoteServerFailedBanner {
             let error_text_color = theme.ansi_fg_red();
 
             let error_text = Text::new(
-                format!("ERROR: {trimmed_error}"),
+                t!("terminal-ssh-failed-banner-error-line", detail = trimmed_error),
                 appearance.ui_font_family(),
                 small_font_size,
             )
